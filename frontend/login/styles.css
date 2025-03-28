@@ -54,3 +54,33 @@ button {
     background-color: black;
     width: 100%;
 }
+
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 10px auto;
+}
+
+.password-container input {
+    width: 100%;
+    padding-right: 40px; 
+    height: 40px;
+}
+
+.eye-icon {
+    position: absolute;
+    width: 7%;
+    right: 10px;
+    top: 50%; 
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.eye-icon:hover {
+    opacity: 1;
+}
