@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Календарь событий института 8</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Сделаем иконку кликабельной -->
+  <a href="index_reg.html">
+    <div class="user-icon">👤</div>
+  </a>
+  <div class="header">Календарь событий института 8</div>
+  <div class="calendar-container">
+    <div class="calendar-header">
+      <button id="prev-month">‹</button>
+      <div id="month-year"></div>
+      <button id="next-month">›</button>
+    </div>
+    <table class="calendar-table">
+      <thead>
+        <tr>
+          <th>пн</th><th>вт</th><th>ср</th><th>чт</th><th>пт</th><th>сб</th><th>вс</th>
+        </tr>
+      </thead>
+      <tbody id="calendar-body"></tbody>
+    </table>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
