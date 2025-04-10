@@ -18,7 +18,7 @@ templates = Jinja2Templates(directory="static")
 
 @app.get("/")
 async def read_root():
-    return {"message": "Перейдите на /static/index_reg.html для входа"}
+    return RedirectResponse(url="/static/index.html")
 
 Base.metadata.create_all(bind=engine)
 
