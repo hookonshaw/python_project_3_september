@@ -114,8 +114,8 @@ margin: 10px 0 5px;
   margin-bottom: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  background-color: #1a1a1a; /* чтобы поля были в стиле всего остального */
-  color: #e1b7f5; /* текст в полях теперь будет светлым */
+  background-color: #1a1a1a; 
+  color: #e1b7f5; 
 }
 
 
@@ -139,13 +139,25 @@ background-color: #c18ee0;
   padding: 10px;
   border-radius: 5px;
   cursor: pointer;
-  display: none; /* Чтобы по умолчанию кнопка была скрыта */
+  display: none;
   margin-top: 10px;
 }
 
 #delete-event:hover {
   background-color: #c18ee0;
 }
+
+.event-panel textarea[name="description"] {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #1a1a1a;
+  color: #e1b7f5;
+  resize: vertical;
+}
+
 
 .close-panel {
 background: none;
