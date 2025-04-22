@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Календарь событий института 8</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a href="index_reg.html">
+    <div class="user-icon">👤</div>
+  </a>
+  <div class="header">Календарь событий института 8</div>
+  <div class="calendar-container">
+    <div class="calendar-header">
+      <button id="prev-month">‹</button>
+      <div id="month-year"></div>
+      <button id="next-month">›</button>
+    </div>
+    <table class="calendar-table">
+      <thead>
+        <tr>
+          <th>пн</th><th>вт</th><th>ср</th><th>чт</th><th>пт</th><th>сб</th><th>вс</th>
+        </tr>
+      </thead>
+      <tbody id="calendar-body"></tbody>
+    </table>
+  </div>
+
+  <div class="event-panel" id="event-panel">
+    <button class="close-panel" id="close-panel">×</button>
+    <h3>Событие</h3>
+    <form id="event-form">
+      <label>Тип</label>
+      <input type="text" name="type" required>
+
+      <label>Формат</label>
+      <select name="format">
+        <option value="online">Онлайн</option>
+        <option value="offline">Оффлайн</option>
+      </select>
+
+      <label>Организатор</label>
+      <input type="text" name="organizer" required>
+
+      <label>Локация</label>
+      <input type="text" name="location">
+
+      <label>количество участников</label>
+      <input type="number" name="participants" min="1">
+
+      <label>Время</label>
+      <input type="time" name="time" required>
+
+      <label>Дата</label>
+      <input type="date" name="date" required>
+
+      <input type="hidden" name="edit" value="false">
+
+      <button type="submit">Сохранить</button>
+      <button type="button" id="delete-event">Удалить</button>
+    </form>
+  </div>
+
+  <script defer src="script.js"></script>
+</body>
+</html>
