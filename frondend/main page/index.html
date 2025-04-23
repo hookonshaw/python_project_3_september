@@ -11,23 +11,58 @@
   <a href="index_reg.html">
     <div class="user-icon">👤</div>
   </a>
-  <div class="header">Календарь событий института 8</div>
-  <div class="calendar-container">
-    <div class="calendar-header">
-      <button id="prev-month">‹</button>
-      <div id="month-year"></div>
-      <button id="next-month">›</button>
-    </div>
-    <table class="calendar-table">
-      <thead>
-        <tr>
-          <th>пн</th><th>вт</th><th>ср</th><th>чт</th><th>пт</th><th>сб</th><th>вс</th>
-        </tr>
-      </thead>
-      <tbody id="calendar-body"></tbody>
-    </table>
+  <!-- Иконка уведомлений -->
+  <div id="notification-icon" class="notification-icon">
+    🔔<span id="notification-count" class="notification-count hidden">0</span>
+  </div>
+  
+  <!-- Панель уведомлений -->
+  <div id="notification-list" class="notification-list hidden"></div>
+  <div id="notification-panel" class="hidden">
+    <ul id="notification-list"></ul>
   </div>
 
+  <div class="header">Календарь событий института 8</div>
+  
+  <div class="calendar-container">
+    <div class="calendar-header">
+      <button id="prev-btn">‹</button>
+      <div class="view-switcher">
+        <button class="view-btn active" data-view="month">Месяц</button>
+        <button class="view-btn" data-view="week">Неделя</button>
+        <button class="view-btn" data-view="day">День</button>
+      </div>
+      <div id="month-year"></div>
+      <button id="next-btn">›</button>
+    </div>
+
+    <!-- Месячный вид -->
+    <div id="month-view" class="view-container">
+      <table class="calendar-table">
+        <thead>
+          <tr>
+            <th>понедельник</th><th>вторник</th><th>среда</th><th>четверг</th><th>пятница</th><th>суббота</th><th>воскресенье</th>
+          </tr>
+        </thead>
+        <tbody id="month-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Недельный вид -->
+    <div id="week-view" class="view-container hidden">
+      <table class="week-table">
+        <thead id="week-header"></thead>
+        <tbody id="week-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Дневной вид -->
+    <div id="day-view" class="view-container hidden">
+      <div class="day-grid" id="day-grid"></div>
+    </div>
+  </div>
+
+  <!-- Панель события -->
   <div class="event-panel" id="event-panel">
     <button class="close-panel" id="close-panel">×</button>
     <h3>Событие</h3>
@@ -50,7 +85,7 @@
       <label>Локация</label>
       <input type="text" name="location">
 
-      <label>количество участников</label>
+      <label>Количество участников</label>
       <input type="number" name="participants" min="1">
 
       <label>Время</label>
@@ -59,13 +94,19 @@
       <label>Дата</label>
       <input type="date" name="date" required>
 
-      <input type="hidden" name="edit" value="false">
+      <!-- Добавляем поле для выбора статуса -->
+      <label>Статус</label>
+      <select name="status">
+        <option value="future">Будущее</option>
+        <option value="past">Прошедшее</option>
+      </select>
 
+      <input type="hidden" name="edit" value="false">
       <button type="submit">Сохранить</button>
       <button type="button" id="delete-event">Удалить</button>
     </form>
   </div>
 
-  <script defer src="script.js"></script>
+  <script src="scripts.js"></script>
 </body>
 </html>
