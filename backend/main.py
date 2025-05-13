@@ -54,21 +54,15 @@ async def login(creds: AdminsLoginSchema, response: Response):
     cursor.execute("SELECT * FROM admins WHERE name=? AND password_hash=?", (inp_username, inp_password))
     result = cursor.fetchone()
     if result:
-        # print('Вход выполнен успешно!')
-        # print('Хэш-пароль: ', inp_password)
         token = security.create_access_token(uid=get_admin_id(inp_username, inp_password))
-        # print("Токен - ", token)
-        # response.set_cookie(config.JWT_ACCESS_COOKIE_NAME, token)
         response.set_cookie(
-                    key="access_token", #config.JWT_ACCESS_COOKIE_NAME,
+                    key="access_token", 
                     value=token,
                     httponly=True,
-                    secure=False,  # Для теста False (в продакшене True)
+                    secure=False,  
                     samesite="lax",
                     path="/"  
                 )
-        # print("Заголовки ответа:")
-        # print(response.headers)
         connection.close()
         RedirectResponse(url="/static/index_admin.html", status_code=302)
         return {"access_token": token}
