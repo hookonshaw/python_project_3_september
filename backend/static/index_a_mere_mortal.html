@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Календарь событий института</title>
+  <link rel="stylesheet" href="styles_a_mere_mortal.css" />
+</head>
+<body>
+  <div class="auth-links">
+    <a href="index_reg.html" class="login-btn">👤</a>
+  </div>
+
+  <div class="header">Календарь событий института 8</div>
+  
+  <div class="calendar-container">
+    <div class="calendar-header">
+      <button id="prev-btn">‹</button>
+      <div class="view-switcher">
+        <button class="view-btn active" data-view="month">Месяц</button>
+        <button class="view-btn" data-view="week">Неделя</button>
+        <button class="view-btn" data-view="day">День</button>
+      </div>
+      <div id="month-year"></div>
+      <button id="next-btn">›</button>
+    </div>
+
+    <!-- Месячный вид -->
+    <div id="month-view" class="view-container">
+      <table class="calendar-table">
+        <thead>
+          <tr>
+            <th>Пн</th><th>Вт</th><th>Ср</th><th>Чт</th><th>Пт</th><th>Сб</th><th>Вс</th>
+          </tr>
+        </thead>
+        <tbody id="month-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Недельный вид -->
+    <div id="week-view" class="view-container hidden">
+      <table class="week-table">
+        <thead id="week-header"></thead>
+        <tbody id="week-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Дневной вид -->
+    <div id="day-view" class="view-container hidden">
+      <div class="day-grid" id="day-grid"></div>
+    </div>
+  </div>
+
+  <!-- Панель просмотра события (только для чтения) -->
+  <div class="event-view-panel hidden" id="event-view-panel">
+    <button class="close-panel" id="close-view-panel">×</button>
+    <h3>Просмотр события</h3>
+    <div class="event-details">
+      <p><strong>Тип:</strong> <span id="view-type"></span></p>
+      <p><strong>Формат:</strong> <span id="view-format"></span></p>
+      <p><strong>Дата:</strong> <span id="view-date"></span></p>
+      <p><strong>Время:</strong> <span id="view-time"></span></p>
+      <p><strong>Организатор:</strong> <span id="view-organizer"></span></p>
+      <p><strong>Локация:</strong> <span id="view-location"></span></p>
+      <p><strong>Описание:</strong> <span id="view-description"></span></p>
+    </div>
+  </div>
+
+  <script src="script_a_mere_mortal.js"></script>
+</body>
+</html>
