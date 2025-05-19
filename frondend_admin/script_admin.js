@@ -567,6 +567,13 @@ function setupEventListeners() {
     notificationList.classList.toggle('hidden');
   });
 
+  // Добавляем обработчик для иконки пользователя
+  document.querySelector('.user-icon-link').addEventListener('click', (e) => {
+    e.preventDefault(); // Предотвращаем стандартное поведение для отладки
+    console.log('Клик по иконке пользователя');
+    window.location.href = 'index_reg.html'; // Принудительный переход
+  });
+
   initDragAndDrop();
 }
 
