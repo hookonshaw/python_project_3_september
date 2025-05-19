@@ -60,7 +60,7 @@ function processServerEvents(serverEvents) {
       location: event.event_auditory,
       description: event.description || '',
       organizer: event.organisator || '',
-      color: event.color || '',
+      color: event.color || '#dca9f2', // Default color if none provided
       link: event.link || '',
       format: event.format || '',
       status: event.status || '',
@@ -291,6 +291,7 @@ function renderMonthView() {
         eventDiv.textContent = `${event.type} (${event.time})`;
         eventDiv.dataset.eventId = index;
         eventDiv.draggable = true;
+        eventDiv.style.backgroundColor = event.color; // Apply event-specific color
         
         eventDiv.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -357,6 +358,7 @@ function renderWeekView() {
             eventDiv.textContent = `${event.type} (${event.time})`;
             eventDiv.dataset.eventId = index;
             eventDiv.draggable = true;
+            eventDiv.style.backgroundColor = event.color; // Apply event-specific color
             
             eventDiv.addEventListener('click', (e) => {
               e.stopPropagation();
@@ -397,6 +399,7 @@ function renderDayView() {
           eventDiv.textContent = `${event.type} (${event.time}, ${event.organizer})`;
           eventDiv.dataset.eventId = index;
           eventDiv.draggable = true;
+          eventDiv.style.backgroundColor = event.color; // Apply event-specific color
           
           eventDiv.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -431,6 +434,7 @@ function openEventPanel(dateStr, eventId = null, hour = null) {
     eventForm.reset();
     eventForm.date.value = dateStr;
     if (hour !== null) eventForm.time.value = `${hour}:00`;
+    eventForm.color.value = '#dca9f2'; // Set default color for new events
     eventForm.edit.value = 'false';
     deleteBtn.style.display = 'none';
   }
