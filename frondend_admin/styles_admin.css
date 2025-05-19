@@ -140,7 +140,6 @@ html, body {
 }
 
 .event-block {
-    background-color: #dca9f2;
     color: #1a1a1a;
     padding: 2px 5px;
     border-radius: 3px;
@@ -263,7 +262,7 @@ html, body {
     position: fixed;
     top: 60px;
     left: 20px;
-    width: 250px;
+    width: 250px-functions;
     max-height: 300px;
     overflow-y: auto;
     background: white;
