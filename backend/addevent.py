@@ -14,13 +14,13 @@ class EventCreate(BaseModel):
     description: Optional[str] = None
     color: Optional[str] = None
     event_auditory: Optional[str] = None
+    admin_id: int  # Теперь обязательное поле, так как в таблице NOT NULL
     link: Optional[str] = None
     format: Optional[str] = None
     organisator: Optional[str] = None
     status: Optional[str] = None
     participants_count: Optional[int] = None
     recurrence_pattern: Optional[str] = None
-    rgb_color: Optional[str] = None
 
 @router.post("/api/events")
 async def create_event(
@@ -28,10 +28,12 @@ async def create_event(
     request: Request,
     security: AuthX = Depends(AuthX)
 ):
-    # Аутентификация
+    # Аутентификация (проверяем, что admin_id из токена совпадает с переданным)
     try:
         payload = await security._get_payload_from_request(request)
-        admin_id = payload.get("uid")
+        token_admin_id = payload.get("uid")
+        if token_admin_id != event_data.admin_id:
+            raise HTTPException(status_code=403, detail="Недостаточно прав")
     except Exception as e:
         raise HTTPException(status_code=401, detail="Не авторизован")
 
@@ -51,6 +53,11 @@ async def create_event(
         conn = sqlite3.connect("events.db")
         cursor = conn.cursor()
 
+        # Проверяем существование таблицы events2
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='events2'")
+        if not cursor.fetchone():
+            raise HTTPException(status_code=500, detail="Таблица events2 не существует")
+
         event_tuple = (
             event_data.event_name,
             event_data.event_date,
@@ -58,24 +65,23 @@ async def create_event(
             event_data.description,
             event_data.color,
             event_data.event_auditory,
-            admin_id,
+            event_data.admin_id,
             event_data.link,
             event_data.format,
             event_data.organisator,
             event_data.status,
             event_data.participants_count,
-            event_data.recurrence_pattern,
-            event_data.rgb_color
+            event_data.recurrence_pattern
         )
 
         cursor.execute('''
-            INSERT INTO events(
+            INSERT INTO events2(
                 event_name, event_date, event_time, description,
                 color, event_auditory, admin_id, link,
                 format, organisator, status,
-                participants_count, recurrence_pattern, rgb_color
+                participants_count, recurrence_pattern
             )
-            VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
         ''', event_tuple)
 
         conn.commit()
@@ -85,9 +91,14 @@ async def create_event(
         return {
             "status": "success",
             "event_id": event_id,
-            "message": "Событие успешно создано"
+            "message": "Событие успешно создано в таблице events2"
         }
 
+    except sqlite3.IntegrityError as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Ошибка целостности данных: {str(e)}"
+        )
     except sqlite3.Error as e:
         raise HTTPException(
             status_code=500,
