@@ -60,12 +60,13 @@ function processServerEvents(serverEvents) {
       event_auditory: event.event_auditory,
       description: event.description || '',
       organisator: event.organisator || '',
-      color: event.color || '#dca9f2', // Значение по умолчанию
+      color: event.color || '#dca9f2',
       link: event.link || '',
       format: event.format || '',
       status: event.status || '',
       participants_count: event.participants_count || null,
-      recurrence_pattern: event.recurrence_pattern || 'none'
+      recurrence_pattern: event.recurrence_pattern || 'none',
+      recurrence_count: event.recurrence_count || 1 // Добавляем recurrence_count
     });
   });
   return processed;
@@ -84,10 +85,7 @@ function hasConflicts(dateStr, event_time, event_auditory, excludeEventId = null
     const [eventHour, eventMinute] = event.event_time.split(':').map(Number);
     const existingTime = eventHour * 60 + eventMinute;
     
-    // Проверяем конфликт только если аудитория указана и совпадает
     const hasAuditoryConflict = event_auditory && event.event_auditory && event.event_auditory === event_auditory;
-    
-    // Конфликт, если время совпадает (в пределах 60 минут) и есть конфликт аудиторий
     const isTimeConflict = Math.abs(existingTime - eventTime) < 60;
     
     if (hasAuditoryConflict && isTimeConflict) {
@@ -98,6 +96,40 @@ function hasConflicts(dateStr, event_time, event_auditory, excludeEventId = null
   });
 }
 
+// Генерация повторяющихся событий
+function generateRecurringEvents(eventData) {
+  const eventsToSave = [eventData];
+  const { recurrence_pattern, recurrence_count, event_date } = eventData;
+  
+  if (recurrence_pattern === 'none' || recurrence_count <= 1) return eventsToSave;
+
+  const baseDate = new Date(event_date);
+  
+  for (let i = 1; i < recurrence_count; i++) {
+    const newDate = new Date(baseDate);
+    
+    if (recurrence_pattern === 'daily') {
+      newDate.setDate(baseDate.getDate() + i);
+    } else if (recurrence_pattern === 'weekly') {
+      newDate.setDate(baseDate.getDate() + i * 7);
+    } else if (recurrence_pattern === 'monthly') {
+      newDate.setMonth(baseDate.getMonth() + i);
+    }
+    
+    const newDateStr = formatDate(newDate);
+    
+    const newEvent = {
+      ...eventData,
+      event_date: newDateStr,
+      id: null // Новый ID будет присвоен сервером
+    };
+    
+    eventsToSave.push(newEvent);
+  }
+  
+  return eventsToSave;
+}
+
 // Отправка события на сервер
 async function saveEventToServer(eventData) {
   if (hasConflicts(eventData.event_date, eventData.event_time, eventData.event_auditory, eventData.id)) {
@@ -105,6 +137,7 @@ async function saveEventToServer(eventData) {
   }
 
   try {
+    console.log('Отправляемые данные:', eventData); // Отладка
     const response = await fetch('/add_events', {
       method: 'POST',
       headers: {
@@ -123,7 +156,8 @@ async function saveEventToServer(eventData) {
         color: eventData.color,
         link: eventData.link,
         participants_count: eventData.participants_count ? parseInt(eventData.participants_count) : null,
-        recurrence_pattern: eventData.recurrence_pattern
+        recurrence_pattern: eventData.recurrence_pattern,
+        recurrence_count: eventData.recurrence_count || 1 // Добавляем recurrence_count
       })
     });
 
@@ -301,7 +335,6 @@ function renderMonthView() {
         eventDiv.dataset.eventId = index;
         eventDiv.draggable = true;
         
-        // Применяем цвет события, если нет конфликта
         if (!hasConflicts(dateStr, event.event_time, event.event_auditory, event.id)) {
           eventDiv.style.backgroundColor = event.color || '#dca9f2';
         }
@@ -372,7 +405,6 @@ function renderWeekView() {
             eventDiv.dataset.eventId = index;
             eventDiv.draggable = true;
             
-            // Применяем цвет события, если нет конфликта
             if (!hasConflicts(dateStr, event.event_time, event.event_auditory, event.id)) {
               eventDiv.style.backgroundColor = event.color || '#dca9f2';
             }
@@ -417,7 +449,6 @@ function renderDayView() {
           eventDiv.dataset.eventId = index;
           eventDiv.draggable = true;
           
-          // Применяем цвет события, если нет конфликта
           if (!hasConflicts(dateStr, event.event_time, event.event_auditory, event.id)) {
             eventDiv.style.backgroundColor = event.color || '#dca9f2';
           }
@@ -458,6 +489,7 @@ function openEventPanel(dateStr, eventId = null, hour = null) {
     eventForm.status.value = event.status;
     eventForm.participants.value = event.participants_count || '';
     eventForm.recurrence.value = event.recurrence_pattern;
+    eventForm.recurrence_count.value = event.recurrence_count || 1; // Добавляем recurrence_count
     eventForm.edit.value = 'true';
     deleteBtn.style.display = 'inline-block';
   } else {
@@ -548,18 +580,23 @@ function setupEventListeners() {
         edit: formData.get('edit'),
         id: formData.get('id') || null
       };
-      const dateStr = eventData.event_date;
 
-      await saveEventToServer(eventData);
+      const eventsToSave = generateRecurringEvents(eventData);
 
-      if (!events[dateStr]) events[dateStr] = [];
-      if (currentEventId !== null) {
-        events[dateStr][currentEventId] = eventData;
-      } else {
-        events[dateStr].push(eventData);
-        addNotification(`Добавлено событие: ${eventData.event_name}`);
+      for (const event of eventsToSave) {
+        const dateStr = event.event_date;
+        await saveEventToServer(event);
+
+        if (!events[dateStr]) events[dateStr] = [];
+        if (event.id) {
+          const index = events[dateStr].findIndex(e => e.id === event.id);
+          if (index !== -1) events[dateStr][index] = event;
+        } else {
+          events[dateStr].push(event);
+        }
       }
 
+      addNotification(`Добавлено событие: ${eventData.event_name}`);
       eventPanel.style.display = 'none';
       renderView();
     } catch (error) {
@@ -591,11 +628,10 @@ function setupEventListeners() {
     notificationList.classList.toggle('hidden');
   });
 
-  // Добавляем обработчик для иконки пользователя
   document.querySelector('.user-icon-link').addEventListener('click', (e) => {
-    e.preventDefault(); // Предотвращаем стандартное поведение для отладки
+    e.preventDefault();
     console.log('Клик по иконке пользователя');
-    window.location.href = 'index_reg.html'; // Принудительный переход
+    window.location.href = 'index_reg.html';
   });
 
   initDragAndDrop();
