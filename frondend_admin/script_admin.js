@@ -54,44 +54,44 @@ function processServerEvents(serverEvents) {
 
     processed[dateStr].push({
       id: event.id,
-      type: event.event_name,
-      date: event.event_date,
-      time: event.event_time,
-      location: event.event_auditory,
+      event_name: event.event_name,
+      event_date: event.event_date,
+      event_time: event.event_time,
+      event_auditory: event.event_auditory,
       description: event.description || '',
-      organizer: event.organisator || '',
-      color: event.color || '#dca9f2', // Default color if none provided
+      organisator: event.organisator || '',
+      color: event.color || '',
       link: event.link || '',
       format: event.format || '',
       status: event.status || '',
-      recurrence: event.recurrence || 'none',
-      recurrence_count: event.recurrence_count || 1
+      participants_count: event.participants_count || null,
+      recurrence_pattern: event.recurrence_pattern || 'none'
     });
   });
   return processed;
 }
 
 // Проверка конфликтов
-function hasConflicts(dateStr, time, location, excludeEventId = null) {
+function hasConflicts(dateStr, event_time, event_auditory, excludeEventId = null) {
   if (!events[dateStr]) return false;
   
-  const [hour, minute] = time.split(':').map(Number);
+  const [hour, minute] = event_time.split(':').map(Number);
   const eventTime = hour * 60 + minute;
   
   return events[dateStr].some(event => {
     if (excludeEventId && event.id === excludeEventId) return false;
     
-    const [eventHour, eventMinute] = event.time.split(':').map(Number);
+    const [eventHour, eventMinute] = event.event_time.split(':').map(Number);
     const existingTime = eventHour * 60 + eventMinute;
     
     return Math.abs(existingTime - eventTime) < 60 && 
-           event.location === location;
+           event.event_auditory === event_auditory;
   });
 }
 
 // Отправка события на сервер
 async function saveEventToServer(eventData) {
-  if (hasConflicts(eventData.date, eventData.time, eventData.location, eventData.id)) {
+  if (hasConflicts(eventData.event_date, eventData.event_time, eventData.event_auditory, eventData.id)) {
     throw new Error('Конфликт: событие в это время уже существует');
   }
 
@@ -103,18 +103,18 @@ async function saveEventToServer(eventData) {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       },
       body: JSON.stringify({
-        type: eventData.type,
-        date: eventData.date,
-        time: eventData.time,
-        location: eventData.location,
+        event_name: eventData.event_name,
+        event_date: eventData.event_date,
+        event_time: eventData.event_time,
+        event_auditory: eventData.event_auditory,
         description: eventData.description,
-        organisator: eventData.organizer,
+        organisator: eventData.organisator,
         format: eventData.format,
         status: eventData.status,
         color: eventData.color,
         link: eventData.link,
-        recurrence: eventData.recurrence,
-        recurrence_count: eventData.recurrence_count
+        participants_count: eventData.participants_count ? parseInt(eventData.participants_count) : null,
+        recurrence_pattern: eventData.recurrence_pattern
       })
     });
 
@@ -141,9 +141,9 @@ async function deleteEventFromServer(dateStr, eventId) {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       },
       body: JSON.stringify({
-        event_name: event.type,
+        event_name: event.event_name,
         event_date: dateStr,
-        event_time: event.time
+        event_time: event.event_time
       })
     });
 
@@ -194,15 +194,15 @@ function initDragAndDrop() {
       const event = events[oldDateStr][eventId];
       
       let newDateStr = dropTarget.dataset.date || formatDate(currentDate);
-      let newTime = event.time;
+      let newTime = event.event_time;
       
       if (dropTarget.classList.contains('hour-slot')) {
         newTime = dropTarget.querySelector('.hour-label').textContent.replace(':00', ':00');
       }
 
-      const updatedEvent = { ...event, date: newDateStr, time: newTime };
+      const updatedEvent = { ...event, event_date: newDateStr, event_time: newTime };
       
-      if (hasConflicts(newDateStr, newTime, updatedEvent.location, event.id)) {
+      if (hasConflicts(newDateStr, newTime, updatedEvent.event_auditory, event.id)) {
         addNotification('Конфликт: событие не может быть перемещено');
         return;
       }
@@ -232,12 +232,12 @@ function checkUpcomingEvents() {
     const eventDate = new Date(dateStr);
     
     dayEvents.forEach(event => {
-      const [hours, minutes] = event.time.split(':').map(Number);
+      const [hours, minutes] = event.event_time.split(':').map(Number);
       eventDate.setHours(hours, minutes, 0, 0);
       
       if (eventDate > now && eventDate <= oneHourLater && 
-          !notifications.some(n => n.includes(`Скоро событие: ${event.type}`))) {
-        addNotification(`Скоро событие: ${event.type} в ${event.time}`);
+          !notifications.some(n => n.includes(`Скоро событие: ${event.event_name}`))) {
+        addNotification(`Скоро событие: ${event.event_name} в ${event.event_time}`);
       }
     });
   });
@@ -286,12 +286,11 @@ function renderMonthView() {
     if (events[dateStr]) {
       events[dateStr].forEach((event, index) => {
         const eventDiv = document.createElement('div');
-        eventDiv.className = `event-block ${event.recurrence !== 'none' ? 'recurring-event' : ''} 
-                            ${hasConflicts(dateStr, event.time, event.location, event.id) ? 'conflict-event' : ''}`;
-        eventDiv.textContent = `${event.type} (${event.time})`;
+        eventDiv.className = `event-block ${event.recurrence_pattern !== 'none' ? 'recurring-event' : ''} 
+                            ${hasConflicts(dateStr, event.event_time, event.event_auditory, event.id) ? 'conflict-event' : ''}`;
+        eventDiv.textContent = `${event.event_name} (${event.event_time})`;
         eventDiv.dataset.eventId = index;
         eventDiv.draggable = true;
-        eventDiv.style.backgroundColor = event.color; // Apply event-specific color
         
         eventDiv.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -350,15 +349,14 @@ function renderWeekView() {
 
       if (events[dateStr]) {
         events[dateStr].forEach((event, index) => {
-          const eventHour = parseInt(event.time.split(':')[0]);
+          const eventHour = parseInt(event.event_time.split(':')[0]);
           if (eventHour === hour) {
             const eventDiv = document.createElement('div');
-            eventDiv.className = `event-block ${event.recurrence !== 'none' ? 'recurring-event' : ''} 
-                                ${hasConflicts(dateStr, event.time, event.location, event.id) ? 'conflict-event' : ''}`;
-            eventDiv.textContent = `${event.type} (${event.time})`;
+            eventDiv.className = `event-block ${event.recurrence_pattern !== 'none' ? 'recurring-event' : ''} 
+                                ${hasConflicts(dateStr, event.event_time, event.event_auditory, event.id) ? 'conflict-event' : ''}`;
+            eventDiv.textContent = `${event.event_name} (${event.event_time})`;
             eventDiv.dataset.eventId = index;
             eventDiv.draggable = true;
-            eventDiv.style.backgroundColor = event.color; // Apply event-specific color
             
             eventDiv.addEventListener('click', (e) => {
               e.stopPropagation();
@@ -391,15 +389,14 @@ function renderDayView() {
 
     if (events[dateStr]) {
       events[dateStr].forEach((event, index) => {
-        const eventHour = parseInt(event.time.split(':')[0]);
+        const eventHour = parseInt(event.event_time.split(':')[0]);
         if (eventHour === hour) {
           const eventDiv = document.createElement('div');
-          eventDiv.className = `event-block ${event.recurrence !== 'none' ? 'recurring-event' : ''} 
-                              ${hasConflicts(dateStr, event.time, event.location, event.id) ? 'conflict-event' : ''}`;
-          eventDiv.textContent = `${event.type} (${event.time}, ${event.organizer})`;
+          eventDiv.className = `event-block ${event.recurrence_pattern !== 'none' ? 'recurring-event' : ''} 
+                              ${hasConflicts(dateStr, event.event_time, event.event_auditory, event.id) ? 'conflict-event' : ''}`;
+          eventDiv.textContent = `${event.event_name} (${event.event_time}, ${event.organisator})`;
           eventDiv.dataset.eventId = index;
           eventDiv.draggable = true;
-          eventDiv.style.backgroundColor = event.color; // Apply event-specific color
           
           eventDiv.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -425,16 +422,24 @@ function openEventPanel(dateStr, eventId = null, hour = null) {
 
   if (eventId !== null && events[dateStr] && events[dateStr][eventId]) {
     const event = events[dateStr][eventId];
-    for (const key in event) {
-      if (eventForm[key]) eventForm[key].value = event[key];
-    }
+    eventForm.type.value = event.event_name;
+    eventForm.date.value = event.event_date;
+    eventForm.time.value = event.event_time;
+    eventForm.description.value = event.description;
+    eventForm.color.value = event.color;
+    eventForm.location.value = event.event_auditory;
+    eventForm.link.value = event.link;
+    eventForm.format.value = event.format;
+    eventForm.organizer.value = event.organisator;
+    eventForm.status.value = event.status;
+    eventForm.participants.value = event.participants_count || '';
+    eventForm.recurrence.value = event.recurrence_pattern;
     eventForm.edit.value = 'true';
     deleteBtn.style.display = 'inline-block';
   } else {
     eventForm.reset();
     eventForm.date.value = dateStr;
     if (hour !== null) eventForm.time.value = `${hour}:00`;
-    eventForm.color.value = '#dca9f2'; // Set default color for new events
     eventForm.edit.value = 'false';
     deleteBtn.style.display = 'none';
   }
@@ -502,8 +507,24 @@ function setupEventListeners() {
       submitBtn.textContent = 'Сохранение...';
 
       const formData = new FormData(eventForm);
-      const eventData = Object.fromEntries(formData.entries());
-      const dateStr = eventData.date;
+      const eventData = {
+        event_name: formData.get('type'),
+        event_date: formData.get('date'),
+        event_time: formData.get('time'),
+        description: formData.get('description') || null,
+        color: formData.get('color') || null,
+        event_auditory: formData.get('location') || null,
+        link: formData.get('link') || null,
+        format: formData.get('format') || null,
+        organisator: formData.get('organizer') || null,
+        status: formData.get('status') || null,
+        participants_count: formData.get('participants') ? parseInt(formData.get('participants')) : null,
+        recurrence_pattern: formData.get('recurrence') || 'none',
+        recurrence_count: formData.get('recurrence_count') ? parseInt(formData.get('recurrence_count')) : 1,
+        edit: formData.get('edit'),
+        id: formData.get('id') || null
+      };
+      const dateStr = eventData.event_date;
 
       await saveEventToServer(eventData);
 
@@ -512,7 +533,7 @@ function setupEventListeners() {
         events[dateStr][currentEventId] = eventData;
       } else {
         events[dateStr].push(eventData);
-        addNotification(`Добавлено событие: ${eventData.type}`);
+        addNotification(`Добавлено событие: ${eventData.event_name}`);
       }
 
       eventPanel.style.display = 'none';
