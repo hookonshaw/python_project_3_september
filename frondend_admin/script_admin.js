@@ -60,7 +60,7 @@ function processServerEvents(serverEvents) {
       event_auditory: event.event_auditory,
       description: event.description || '',
       organisator: event.organisator || '',
-      color: event.color || '',
+      color: event.color || '#dca9f2', // Значение по умолчанию
       link: event.link || '',
       format: event.format || '',
       status: event.status || '',
@@ -84,15 +84,24 @@ function hasConflicts(dateStr, event_time, event_auditory, excludeEventId = null
     const [eventHour, eventMinute] = event.event_time.split(':').map(Number);
     const existingTime = eventHour * 60 + eventMinute;
     
-    return Math.abs(existingTime - eventTime) < 60 && 
-           event.event_auditory === event_auditory;
+    // Проверяем конфликт только если аудитория указана и совпадает
+    const hasAuditoryConflict = event_auditory && event.event_auditory && event.event_auditory === event_auditory;
+    
+    // Конфликт, если время совпадает (в пределах 60 минут) и есть конфликт аудиторий
+    const isTimeConflict = Math.abs(existingTime - eventTime) < 60;
+    
+    if (hasAuditoryConflict && isTimeConflict) {
+      console.log(`Конфликт обнаружен: событие "${event.event_name}" в ${event.event_time}, аудитория ${event.event_auditory}`);
+    }
+    
+    return hasAuditoryConflict && isTimeConflict;
   });
 }
 
 // Отправка события на сервер
 async function saveEventToServer(eventData) {
   if (hasConflicts(eventData.event_date, eventData.event_time, eventData.event_auditory, eventData.id)) {
-    throw new Error('Конфликт: событие в это время уже существует');
+    throw new Error('Конфликт: событие в это время уже существует в указанной аудитории');
   }
 
   try {
@@ -292,6 +301,11 @@ function renderMonthView() {
         eventDiv.dataset.eventId = index;
         eventDiv.draggable = true;
         
+        // Применяем цвет события, если нет конфликта
+        if (!hasConflicts(dateStr, event.event_time, event.event_auditory, event.id)) {
+          eventDiv.style.backgroundColor = event.color || '#dca9f2';
+        }
+        
         eventDiv.addEventListener('click', (e) => {
           e.stopPropagation();
           openEventPanel(dateStr, index);
@@ -358,6 +372,11 @@ function renderWeekView() {
             eventDiv.dataset.eventId = index;
             eventDiv.draggable = true;
             
+            // Применяем цвет события, если нет конфликта
+            if (!hasConflicts(dateStr, event.event_time, event.event_auditory, event.id)) {
+              eventDiv.style.backgroundColor = event.color || '#dca9f2';
+            }
+            
             eventDiv.addEventListener('click', (e) => {
               e.stopPropagation();
               openEventPanel(dateStr, index);
@@ -397,6 +416,11 @@ function renderDayView() {
           eventDiv.textContent = `${event.event_name} (${event.event_time}, ${event.organisator})`;
           eventDiv.dataset.eventId = index;
           eventDiv.draggable = true;
+          
+          // Применяем цвет события, если нет конфликта
+          if (!hasConflicts(dateStr, event.event_time, event.event_auditory, event.id)) {
+            eventDiv.style.backgroundColor = event.color || '#dca9f2';
+          }
           
           eventDiv.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -512,7 +536,7 @@ function setupEventListeners() {
         event_date: formData.get('date'),
         event_time: formData.get('time'),
         description: formData.get('description') || null,
-        color: formData.get('color') || null,
+        color: formData.get('color') || '#dca9f2',
         event_auditory: formData.get('location') || null,
         link: formData.get('link') || null,
         format: formData.get('format') || null,
