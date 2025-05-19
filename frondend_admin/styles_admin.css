@@ -140,7 +140,7 @@ html, body {
 }
 
 .event-block {
-    background-color: #dca9f2;
+    background-color: #dca9f2; /* Fallback color */
     color: #1a1a1a;
     padding: 2px 5px;
     border-radius: 3px;
@@ -202,6 +202,12 @@ html, body {
     border: 1px solid #ccc;
     background-color: #1a1a1a;
     color: #e1b7f5;
+}
+
+.event-panel input[type="color"] {
+    padding: 2px; /* Reduced padding for color picker */
+    height: 30px; /* Fixed height for better appearance */
+    cursor: pointer;
 }
 
 .event-panel button[type="submit"],
