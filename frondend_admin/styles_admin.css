@@ -140,7 +140,7 @@ html, body {
 }
 
 .event-block {
-    background-color: #dca9f2; /* Fallback color */
+    background-color: #dca9f2;
     color: #1a1a1a;
     padding: 2px 5px;
     border-radius: 3px;
@@ -165,6 +165,17 @@ html, body {
     right: 20px;
     font-size: 28px;
     color: #e1b7f5;
+}
+
+.user-icon-link {
+    text-decoration: none;
+    color: #e1b7f5;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.user-icon-link:hover .user-icon {
+    transform: scale(1.2);
 }
 
 .event-panel {
@@ -202,12 +213,6 @@ html, body {
     border: 1px solid #ccc;
     background-color: #1a1a1a;
     color: #e1b7f5;
-}
-
-.event-panel input[type="color"] {
-    padding: 2px; /* Reduced padding for color picker */
-    height: 30px; /* Fixed height for better appearance */
-    cursor: pointer;
 }
 
 .event-panel button[type="submit"],
