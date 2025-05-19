@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Календарь событий института 8</title>
+  <link rel="stylesheet" href="styles_admin.css" />
+</head>
+<body>
+  <a href="index_reg.html">
+    <div class="user-icon">👤</div>
+  </a>
+  <div id="notification-icon" class="notification-icon">
+    🔔<span id="notification-count" class="notification-count hidden">0</span>
+  </div>
+  
+  <div id="notification-list" class="notification-list hidden"></div>
+
+  <div class="header">Календарь событий института 8</div>
+  
+  <div class="calendar-container">
+    <div class="calendar-header">
+      <button id="prev-btn">‹</button>
+      <div class="view-switcher">
+        <button class="view-btn active" data-view="month">Месяц</button>
+        <button class="view-btn" data-view="week">Неделя</button>
+        <button class="view-btn" data-view="day">День</button>
+      </div>
+      <div id="month-year"></div>
+      <button id="next-btn">›</button>
+    </div>
+
+    <!-- Месячный вид -->
+    <div id="month-view" class="view-container">
+      <table class="calendar-table">
+        <thead>
+          <tr>
+            <th>понедельник</th><th>вторник</th><th>среда</th><th>четверг</th><th>пятница</th><th>суббота</th><th>воскресенье</th>
+          </tr>
+        </thead>
+        <tbody id="month-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Недельный вид -->
+    <div id="week-view" class="view-container hidden">
+      <table class="week-table">
+        <thead id="week-header"></thead>
+        <tbody id="week-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Дневной вид -->
+    <div id="day-view" class="view-container hidden">
+      <div class="day-grid" id="day-grid"></div>
+    </div>
+  </div>
+
+  <!-- Панель события -->
+  <div class="event-panel" id="event-panel">
+    <button class="close-panel" id="close-panel">×</button>
+    <h3>Событие</h3>
+    <form id="event-form">
+      <label>Тип</label>
+      <input type="text" name="type" required>
+
+      <label>Формат</label>
+      <select name="format">
+        <option value="online">Онлайн</option>
+        <option value="offline">Оффлайн</option>
+      </select>
+
+      <label>Организатор</label>
+      <input type="text" name="organizer" required>
+
+      <label>Описание</label>
+      <textarea name="description" rows="4"></textarea>
+
+      <label>Локация</label>
+      <input type="text" name="location">
+      
+      <label>Количество участников</label>
+      <input type="number" name="participants" min="1">
+
+      <label>Повторение</label>
+      <select name="recurrence">
+        <option value="none">Нет</option>
+        <option value="daily">Ежедневно</option>
+        <option value="weekly">Еженедельно</option>
+        <option value="monthly">Ежемесячно</option>
+      </select>
+
+      <label>Количество повторений</label>
+      <input type="number" name="recurrence_count" min="1" value="1">
+
+      <label>Время</label>
+      <input type="time" name="time" required>
+
+      <label>Дата</label>
+      <input type="date" name="date" required>
+
+      <label>Статус</label>
+      <select name="status">
+        <option value="future">Будущее</option>
+        <option value="past">Прошедшее</option>
+      </select>
+
+      <input type="hidden" name="edit" value="false">
+      <button type="submit">Сохранить</button>
+      <button type="button" id="delete-event">Удалить</button>
+    </form>
+  </div>
+
+  <script src="script_admin.js"></script>
+</body>
+</html>
