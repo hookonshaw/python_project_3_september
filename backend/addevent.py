@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
-from authx import AuthX
+from authx import AuthX, TokenPayload
 import sqlite3
 
 router = APIRouter()
+security = AuthX()
 
 class EventCreate(BaseModel):
     event_name: str
@@ -14,38 +15,37 @@ class EventCreate(BaseModel):
     description: Optional[str] = None
     color: Optional[str] = None
     event_auditory: Optional[str] = None
-    admin_id: int  # Обязательное поле
     link: Optional[str] = None
     format: Optional[str] = None
     organisator: Optional[str] = None
     status: Optional[str] = None
     participants_count: Optional[int] = None
     recurrence_pattern: Optional[str] = None
-    recurrence_count: Optional[int] = None  # Новое поле для количества повторений
+    recurrence_count: Optional[int] = None
 
-@router.post("/api/events")
-async def create_event(
+@router.post("/add_events")
+async def add_events(
     event_data: EventCreate,
-    request: Request,
-    security: AuthX = Depends(AuthX)
+    payload: TokenPayload = Depends(security.access_token_required)
 ):
-    # Аутентификация
     try:
-        payload = await security._get_payload_from_request(request)
-        token_admin_id = payload.get("uid")
-        if token_admin_id != event_data.admin_id:
-            raise HTTPException(status_code=403, detail="Недостаточно прав")
+        admin_id = payload.sub
+        print("ADMIN ID:", admin_id)
     except Exception as e:
-        raise HTTPException(status_code=401, detail="Не авторизован")
+        raise HTTPException(
+            status_code=401,
+            detail={"message": "ID администратора не найден", "error": str(e)}
+        ) from e
 
     # Валидация даты и времени
     try:
         datetime.strptime(event_data.event_date, "%Y-%m-%d")
         datetime.strptime(event_data.event_time, "%H:%M")
-    except ValueError:
+    except ValueError as e:
+        print(f"Ошибка валидации даты/времени: {str(e)}")
         raise HTTPException(
             status_code=400,
-            detail="Неверный формат даты/времени. Используйте ГГГГ-ММ-ДД и ЧЧ:ММ"
+            detail="Неверный формат даты или времени. Используйте ГГГГ-ММ-ДД для даты и ЧЧ:ММ для времени"
         )
 
     # Валидация повторений
@@ -62,7 +62,10 @@ async def create_event(
         # Проверяем существование таблицы events
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='events'")
         if not cursor.fetchone():
-            raise HTTPException(status_code=500, detail="Таблица events не существует")
+            raise HTTPException(
+                status_code=500,
+                detail="Таблица events не существует"
+            )
 
         # Проверяем наличие поля recurrence_count
         cursor.execute("PRAGMA table_info(events)")
@@ -79,7 +82,7 @@ async def create_event(
             event_data.description,
             event_data.color,
             event_data.event_auditory,
-            event_data.admin_id,
+            admin_id,  # Используем admin_id из токена
             event_data.link,
             event_data.format,
             event_data.organisator,
@@ -107,7 +110,8 @@ async def create_event(
         return {
             "status": "success",
             "event_id": event_id,
-            "message": "Событие успешно создано"
+            "message": "Событие успешно создано",
+            "admin_id": admin_id
         }
 
     except sqlite3.IntegrityError as e:
