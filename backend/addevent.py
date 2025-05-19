@@ -14,6 +14,13 @@ class EventCreate(BaseModel):
     description: Optional[str] = None
     color: Optional[str] = None
     event_auditory: Optional[str] = None
+    link: Optional[str] = None
+    format: Optional[str] = None
+    organisator: Optional[str] = None
+    status: Optional[str] = None
+    participants_count: Optional[int] = None
+    recurrence_pattern: Optional[str] = None
+    rgb_color: Optional[str] = None
 
 @router.post("/api/events")
 async def create_event(
@@ -21,12 +28,14 @@ async def create_event(
     request: Request,
     security: AuthX = Depends(AuthX)
 ):
+    # Аутентификация
     try:
         payload = await security._get_payload_from_request(request)
         admin_id = payload.get("uid")
     except Exception as e:
         raise HTTPException(status_code=401, detail="Не авторизован")
 
+    # Валидация даты и времени
     try:
         datetime.strptime(event_data.event_date, "%Y-%m-%d")
     except ValueError:
@@ -37,6 +46,7 @@ async def create_event(
     except ValueError:
         raise HTTPException(status_code=400, detail="Неверный формат времени. Используйте ЧЧ:ММ")
 
+    # Создание события в БД
     try:
         conn = sqlite3.connect("events.db")
         cursor = conn.cursor()
@@ -48,15 +58,43 @@ async def create_event(
             event_data.description,
             event_data.color,
             event_data.event_auditory,
-            admin_id
+            admin_id,
+            event_data.link,
+            event_data.format,
+            event_data.organisator,
+            event_data.status,
+            event_data.participants_count,
+            event_data.recurrence_pattern,
+            event_data.rgb_color
         )
 
-        cursor.execute('''INSERT INTO events(event_name, event_date, event_time, description, color, event_auditory, admin_id)
-                         VALUES(?,?,?,?,?,?,?)''', event_tuple)
+        cursor.execute('''
+            INSERT INTO events(
+                event_name, event_date, event_time, description,
+                color, event_auditory, admin_id, link,
+                format, organisator, status,
+                participants_count, recurrence_pattern, rgb_color
+            )
+            VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        ''', event_tuple)
+
         conn.commit()
         event_id = cursor.lastrowid
         conn.close()
 
-        return {"status": "success", "event_id": event_id}
+        return {
+            "status": "success",
+            "event_id": event_id,
+            "message": "Событие успешно создано"
+        }
+
     except sqlite3.Error as e:
-        raise HTTPException(status_code=500, detail=f"Ошибка базы данных: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Ошибка базы данных: {str(e)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Неизвестная ошибка: {str(e)}"
+        )
