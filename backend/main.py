@@ -76,3 +76,62 @@ async def protected(request: Request, user=Depends(security.access_token_require
         return RedirectResponse(url="/static/index_admin.html")
     else:
         return RedirectResponse(url="/static/index_a_merge_mortal.html")
+
+
+@app.post("/add_events")
+async def add_events(event_data: EventCreate, payload: TokenPayload = Depends(security.access_token_required)):
+    # print(payload)
+    try:
+        admin_id = getattr(payload, "sub")
+    except Exception as e:
+        raise HTTPException(401, detail={"ID администратора не найден": str(e)}) from e
+
+    # Валидация даты и времени
+    try:
+        datetime.strptime(event_data.event_date, "%Y-%m-%d")
+        datetime.strptime(event_data.event_time, "%H:%M")
+    except ValueError as e:
+        print(f"Ошибка валидации даты/времени: {str(e)}")
+        raise HTTPException(status_code=400, detail="Неверный формат даты или времени")
+
+    try:
+        conn = sqlite3.connect("events.db")
+        if not conn:
+            raise HTTPException(status_code=500, detail="Не удалось подключиться к БД")
+
+        cursor = conn.cursor()
+        # Логируем данные перед вставкой
+        print(f"Данные события: {event_data.dict()}")
+        print(f"Admin ID: {admin_id}")
+
+        cursor.execute('''
+        INSERT INTO events (
+            event_name, event_date, event_time, description, color, 
+            event_auditory, admin_id, link, format, organisator, status
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            event_data.event_name,
+            event_data.event_date,
+            event_data.event_time,
+            event_data.description,
+            event_data.color,
+            event_data.event_auditory,
+            admin_id,
+            event_data.link,
+            event_data.format,
+            event_data.organizer,  # Важно: используется organizer
+            event_data.status
+        ))
+
+        conn.commit()
+        event_id = cursor.lastrowid
+        conn.close()
+
+        return {"status": "success", "event_id": event_id}
+
+    except sqlite3.Error as e:
+        print(f"Ошибка SQLite: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Ошибка базы данных: {str(e)}")
+    except Exception as e:
+        print(f"Неожиданная ошибка: {str(e)}")
+        raise HTTPException(status_code=500, detail="Внутренняя ошибка сервера")
