@@ -29,6 +29,25 @@ def add_event(conn, event_data):
         print(f"Ошибка при добавлении события: {e}")
         return None
 
+def del_event(conn, event_id):
+    try:
+        cursor = conn.cursor()
+        sql = "DELETE FROM events WHERE id = ?"
+        cursor.execute(sql, (event_id,))
+        conn.commit()
+        if cursor.rowcount > 0:
+            print(f"Событие {event_id} успешно удалено.")
+            return True
+        else:
+            print(f"Нет события {event_id}.")
+            return False
+    except sqlite3.Error as e:
+        print(f"Ошибка при добавлении события: {e}")
+        return False
+    finally:
+        if conn:
+            conn.close()
+
 def interactive_add_event(conn, admin_id):
     print("\nДобавление нового события:")
     event_name = input("Название события: ").strip()
