@@ -1,264 +1,412 @@
+/* Общие стили */
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    background-color: #1a1a1a;
-    color: #e1b7f5;
-    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a4a 100%);
+    color: #e0e0e0;
+    font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
     display: flex;
     flex-direction: column;
-  }
-  
-  .header {
-    background-color: #dca9f2;
-    color: white;
-    padding: 10px 30px;
-    border-radius: 30px;
-    margin: 20px auto 10px;
-    font-size: 20px;
+    overflow-x: hidden;
+}
+
+/* Шапка */
+.header {
+    background: linear-gradient(90deg, #7b2cbf 0%, #9d4edd 100%);
+    color: #ffffff;
+    padding: 15px 40px;
+    border-radius: 15px;
+    margin: 20px auto;
+    font-size: 24px;
+    font-weight: 600;
     text-align: center;
-  }
-  
-  .calendar-container {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 90%;
+}
+
+/* Контейнер календаря */
+.calendar-container {
     flex: 1;
     display: flex;
     flex-direction: column;
-    max-width: 100%;
-    margin: 0 auto;
     width: 100%;
-    padding: 0 2%;
+    max-width: 1400px; /* Увеличена максимальная ширина */
+    margin: 0 auto;
+    padding: 20px;
     box-sizing: border-box;
-  }
-  
-  .calendar-header {
+}
+
+/* Заголовок календаря */
+.calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 24px;
-    margin: 10px auto;
+    font-size: 20px;
+    margin: 15px auto;
     width: 100%;
-    max-width: 1000px;
-  }
-  
-  .calendar-header button {
+    max-width: 1200px; /* Увеличена максимальная ширина заголовка */
+}
+
+.calendar-header button {
     background: none;
     border: none;
-    color: #e1b7f5;
-    font-size: 30px;
+    color: #e0e0e0;
+    font-size: 28px;
     cursor: pointer;
-  }
-  
-  .view-switcher {
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.calendar-header button:hover {
+    color: #9d4edd;
+    transform: scale(1.2);
+}
+
+/* Переключатель видов */
+.view-switcher {
     display: flex;
-    gap: 5px;
-  }
-  
-  .view-btn {
-    background: #2c2c2c;
-    border: 1px solid #e1b7f5;
-    color: #e1b7f5;
-    padding: 5px 10px;
+    gap: 10px;
+}
+
+.view-btn {
+    background: #2a2a4a;
+    border: 1px solid #9d4edd;
+    color: #e0e0e0;
+    padding: 8px 16px;
     cursor: pointer;
-    border-radius: 5px;
-  }
-  
-  .view-btn.active {
-    background: #e1b7f5;
-    color: #1a1a1a;
-  }
-  
-  .hidden {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.view-btn:hover {
+    background: #9d4edd;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.view-btn.active {
+    background: #7b2cbf;
+    color: #ffffff;
+    border-color: #7b2cbf;
+}
+
+/* Скрытые элементы */
+.hidden {
     display: none;
-  }
-  
-  /* Месячный вид */
-  .calendar-table {
+}
+
+/* Месячный вид */
+.calendar-table {
     width: 100%;
-    height: 100%;
-    max-width: 1000px;
+    max-width: 1200px; /* Увеличена максимальная ширина таблицы */
     margin: 0 auto;
     border-collapse: collapse;
     flex: 1;
-  }
-  
-  .calendar-table th,
-  .calendar-table td {
-    border: 2px solid #e1b7f5;
-    width: 14.28%;
-    height: calc(100vh / 8);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.calendar-table th,
+.calendar-table td {
+    border: 1px solid rgba(157, 78, 221, 0.3);
+    width: 14.28%; /* Обеспечивает равномерное распределение */
+    height: calc(100vh / 6); /* Увеличена высота ячеек для лучшей читаемости */
     text-align: right;
     vertical-align: top;
-    padding: 5px;
+    padding: 10px;
     font-size: 16px;
     box-sizing: border-box;
     cursor: pointer;
-  }
-  
-  .calendar-table th {
-    font-weight: bold;
+    /* Убраны эффекты наведения */
+}
+
+.calendar-table th {
+    font-weight: 600;
     text-align: center;
-  }
-  
-  /* Недельный вид */
-  .week-table {
+    background: rgba(123, 44, 191, 0.1);
+}
+
+.calendar-table td:hover {
+    background: transparent; /* Убрано выделение при наведении */
+}
+
+/* Недельный вид */
+.week-table {
     width: 100%;
     border-collapse: collapse;
-  }
-  
-  .week-table th, 
-  .week-table td {
-    border: 1px solid #e1b7f5;
-    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.week-table th,
+.week-table td {
+    border: 1px solid rgba(157, 78, 221, 0.3);
+    padding: 10px;
     text-align: center;
     vertical-align: top;
     height: 100px;
-  }
-  
-  .week-table th {
-    font-weight: bold;
-  }
-  
-  /* Дневной вид */
-  .day-grid {
+    /* Убраны эффекты наведения */
+}
+
+.week-table th {
+    font-weight: 600;
+    background: rgba(123, 44, 191, 0.1);
+}
+
+.week-table td:hover {
+    background: transparent; /* Убрано выделение при наведении */
+}
+
+/* Дневной вид */
+.day-grid {
     display: grid;
-    grid-template-rows: repeat(24, 60px);
-    gap: 5px;
-    margin-top: 10px;
-  }
-  
-  .hour-slot {
-    border-bottom: 1px solid #e1b7f5;
-    padding: 5px;
+    grid-template-rows: repeat(24, 70px);
+    gap: 8px;
+    margin-top: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 10px;
+}
+
+.hour-slot {
+    border-bottom: 1px solid rgba(157, 78, 221, 0.3);
+    padding: 8px;
     position: relative;
-  }
-  
-  .hour-label {
+    /* Убраны эффекты наведения */
+}
+
+.hour-slot:hover {
+    background: transparent; /* Убрано выделение при наведении */
+}
+
+.hour-label {
     position: absolute;
-    left: 5px;
-    top: 5px;
-    font-weight: bold;
-  }
-  
-  .event-block {
-    background-color: #dca9f2;
-    color: #1a1a1a;
-    padding: 2px 5px;
-    border-radius: 3px;
-    margin-top: 5px;
-    font-size: 12px;
-  }
-  
-  .user-icon {
+    left: 10px;
+    top: 8px;
+    font-weight: 500;
+    color: #e0e0e0;
+}
+
+/* События */
+.event-block {
+    background: #7b2cbf;
+    color: #ffffff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    margin-top: 8px;
+    font-size: 13px;
+    cursor: move;
+    user-select: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.event-block:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.conflict-event {
+    background: #ff4d4d !important;
+    border: 1px solid #cc0000 !important;
+}
+
+.recurring-event {
+    border-left: 4px solid #4CAF50;
+}
+
+/* Иконка пользователя */
+.user-icon {
     position: absolute;
     top: 20px;
     right: 20px;
-    font-size: 28px;
-    color: #e1b7f5;
-  }
-  
-  .event-panel {
+    font-size: 30px;
+    color: #e0e0e0;
+    transition: transform 0.2s ease;
+}
+
+.user-icon-link:hover .user-icon {
+    transform: scale(1.2);
+    color: #9d4edd;
+}
+
+/* Панель событий */
+.event-panel {
+    overflow-y: auto;
     position: fixed;
     top: 0;
     right: 0;
-    width: 300px;
+    width: 350px;
     height: 100%;
-    background-color: #2c2c2c;
-    color: white;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
-    padding: 20px;
+    background: #2a2a4a;
+    color: #e0e0e0;
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.3);
+    padding: 25px;
     display: none;
     flex-direction: column;
     z-index: 1000;
-  }
-  
-  .event-panel h3 {
-    margin-top: 0;
-  }
-  
-  .event-panel label {
+    border-left: 2px solid #9d4edd;
+}
+
+.event-panel h3 {
+    margin: 0 0 20px;
+    font-size: 22px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.event-panel label {
     display: block;
-    margin: 10px 0 5px;
-  }
-  
-  .event-panel input,
-  .event-panel select,
-  .event-panel textarea {
+    margin: 12px 0 6px;
+    font-weight: 500;
+}
+
+.event-panel input,
+.event-panel select,
+.event-panel textarea {
     width: 100%;
-    padding: 5px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    background-color: #1a1a1a;
-    color: #e1b7f5;
-  }
-  
-  .event-panel button[type="submit"],
-  #delete-event {
-    background-color: #dca9f2;
-    border: none;
-    color: white;
     padding: 10px;
-    border-radius: 5px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(157, 78, 221, 0.5);
+    background: #1e1e2f;
+    color: #e0e0e0;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.event-panel input:focus,
+.event-panel select:focus,
+.event-panel textarea:focus {
+    border-color: #9d4edd;
+    outline: none;
+}
+
+.event-panel button[type="submit"],
+#delete-event {
+    background: #7b2cbf;
+    border: none;
+    color: #ffffff;
+    padding: 12px;
+    border-radius: 8px;
     cursor: pointer;
-    margin-top: 10px;
-  }
-  
-  #delete-event {
+    font-weight: 500;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.event-panel button[type="submit"]:hover,
+#delete-event:hover {
+    background: #9d4edd;
+    transform: translateY(-2px);
+}
+
+#delete-event {
+    background: #ff4d4d;
     display: none;
-  }
-  
-  .close-panel {
+}
+
+#delete-event:hover {
+    background: #cc0000;
+}
+
+.close-panel {
     background: none;
     border: none;
-    color: white;
-    font-size: 20px;
+    color: #e0e0e0;
+    font-size: 24px;
     cursor: pointer;
     align-self: flex-end;
-  }
-  
-  .notification-icon {
+    transition: color 0.2s ease;
+}
+
+.close-panel:hover {
+    color: #9d4edd;
+}
+
+/* Уведомления */
+.notification-icon {
     position: fixed;
     top: 20px;
     left: 20px;
-    font-size: 24px;
+    font-size: 28px;
+    color: #e0e0e0;
     cursor: pointer;
     z-index: 1000;
-  }
-  
-  .notification-count {
-    background-color: red;
-    color: white;
+    transition: transform 0.2s ease;
+}
+
+.notification-icon:hover {
+    transform: scale(1.2);
+    color: #9d4edd;
+}
+
+.notification-count {
+    background: #ff4d4d;
+    color: #ffffff;
     font-size: 12px;
-    padding: 2px 6px;
+    padding: 4px 8px;
     border-radius: 50%;
     position: absolute;
-    top: -8px;
-    left: 16px;
-  }
-  
-  .notification-list {
+    top: -10px;
+    left: 20px;
+}
+
+.notification-list {
     position: fixed;
     top: 60px;
     left: 20px;
-    width: 250px;
-    max-height: 300px;
+    width: 300px;
+    max-height: 350px;
     overflow-y: auto;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 10px;
+    background: #2a2a4a;
+    border: 1px solid rgba(157, 78, 221, 0.5);
+    border-radius: 12px;
+    padding: 15px;
     z-index: 999;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  }
-  
-  .notification-list p {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.notification-list p {
     margin: 8px 0;
     font-size: 14px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 4px;
-  }
-  
-  .hidden {
-    display: none;
-  }
-  
+    color: #e0e0e0;
+    border-bottom: 1px solid rgba(157, 78, 221, 0.3);
+    padding-bottom: 8px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .calendar-container {
+        padding: 10px;
+    }
+
+    .calendar-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .event-panel {
+        width: 100%;
+        max-width: 100%;
+        border-left: none;
+        border-top: 2px solid #9d4edd;
+    }
+
+    .calendar-table th,
+    .calendar-table td {
+        font-size: 14px;
+        padding: 5px;
+    }
+
+    .week-table th,
+    .week-table td {
+        font-size: 14px;
+        padding: 5px;
+    }
+
+    .day-grid {
+        grid-template-rows: repeat(24, 50px);
+    }
+}
