@@ -8,19 +8,14 @@
   <link rel="stylesheet" href="styles_admin.css" />
 </head>
 <body>
-  <a href="index_reg.html">
+  <a href="index_reg.html" class="user-icon-link" onclick="console.log('Клик по иконке пользователя')">
     <div class="user-icon">👤</div>
   </a>
-  <!-- Иконка уведомлений -->
   <div id="notification-icon" class="notification-icon">
     🔔<span id="notification-count" class="notification-count hidden">0</span>
   </div>
   
-  <!-- Панель уведомлений -->
   <div id="notification-list" class="notification-list hidden"></div>
-  <div id="notification-panel" class="hidden">
-    <ul id="notification-list"></ul>
-  </div>
 
   <div class="header">Календарь событий института 8</div>
   
@@ -81,12 +76,29 @@
 
       <label>Описание</label>
       <textarea name="description" rows="4"></textarea>
+      
+      <label>Ссылка на событие</label>
+      <input type="url" name="link" placeholder="https://example.com">
+
+      <label>Цвет события</label>
+      <input type="color" name="color" value="#dca9f2">
 
       <label>Локация</label>
       <input type="text" name="location">
-
+      
       <label>Количество участников</label>
       <input type="number" name="participants" min="1">
+
+      <label>Повторение</label>
+      <select name="recurrence">
+        <option value="none">Нет</option>
+        <option value="daily">Ежедневно</option>
+        <option value="weekly">Еженедельно</option>
+        <option value="monthly">Ежемесячно</option>
+      </select>
+
+      <label>Количество повторений</label>
+      <input type="number" name="recurrence_count" min="1" value="1">
 
       <label>Время</label>
       <input type="time" name="time" required>
@@ -94,7 +106,6 @@
       <label>Дата</label>
       <input type="date" name="date" required>
 
-      <!-- Добавляем поле для выбора статуса -->
       <label>Статус</label>
       <select name="status">
         <option value="future">Будущее</option>
