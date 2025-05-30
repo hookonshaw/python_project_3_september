@@ -1,37 +1,33 @@
+
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Календарь событий института 8</title>
-  <link rel="stylesheet" href="styles_admin.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Календарь событий института</title>
+  <link rel="stylesheet" href="styles_admin.css">
 </head>
 <body>
-  <a href="index_reg.html" class="user-icon-link" onclick="console.log('Клик по иконке пользователя')">
-    <div class="user-icon">👤</div>
-  </a>
-  <div id="notification-icon" class="notification-icon">
-    🔔<span id="notification-count" class="notification-count hidden">0</span>
-  </div>
-  
+  <a href="#" class="user-icon-link"><span class="user-icon">👤</span></a>
+  <a href="/logout" id="logout-btn" class="logout-btn">Выйти</a>
+  <button id="theme-toggle" class="theme-toggle">🌙</button> <!-- Добавляем переключатель темы -->
+  <div id="notification-icon" class="notification-icon">🔔<span id="notification-count" class="notification-count hidden">0</span></div>
   <div id="notification-list" class="notification-list hidden"></div>
 
-  <div class="header">Календарь событий института 8</div>
-  
+  <div class="header">Календарь событий института</div>
+
   <div class="calendar-container">
     <div class="calendar-header">
       <button id="prev-btn">‹</button>
+      <div id="month-year"></div>
       <div class="view-switcher">
         <button class="view-btn active" data-view="month">Месяц</button>
         <button class="view-btn" data-view="week">Неделя</button>
         <button class="view-btn" data-view="day">День</button>
       </div>
-      <div id="month-year"></div>
       <button id="next-btn">›</button>
     </div>
 
-    <!-- Месячный вид -->
     <div id="month-view" class="view-container">
       <table class="calendar-table">
         <thead>
@@ -43,7 +39,6 @@
       </table>
     </div>
 
-    <!-- Недельный вид -->
     <div id="week-view" class="view-container hidden">
       <table class="week-table">
         <thead id="week-header"></thead>
@@ -51,73 +46,60 @@
       </table>
     </div>
 
-    <!-- Дневной вид -->
     <div id="day-view" class="view-container hidden">
       <div class="day-grid" id="day-grid"></div>
     </div>
+
+    <div id="event-panel" class="event-panel hidden">
+      <button id="close-panel">×</button>
+      <h3>Событие</h3>
+      <form id="event-form">
+        <input type="hidden" name="id">
+        <input type="hidden" name="edit" value="false">
+        <label>Тип</label>
+        <input type="text" name="type" required>
+        <label>Формат</label>
+        <select name="format">
+          <option value="online">Онлайн</option>
+          <option value="offline">Оффлайн</option>
+        </select>
+        <label>Организатор</label>
+        <input type="text" name="organizer">
+        <label>Описание</label>
+        <textarea id="description" name="description"></textarea>
+        <button type="button" id="generate-description-btn">Сгенерировать описание</button>
+        <label>Ссылка на событие</label>
+        <input type="text" name="link">
+        <label>Цвет события</label>
+        <input type="color" name="color" value="#dca9f2">
+        <label>Локация</label>
+        <input type="text" name="location">
+        <label>Количество участников</label>
+        <input type="number" name="participants" min="0">
+        <label>Повторение</label>
+        <select name="recurrence">
+          <option value="none">Нет</option>
+          <option value="daily">Ежедневно</option>
+          <option value="weekly">Еженедельно</option>
+          <option value="monthly">Ежемесячно</option>
+        </select>
+        <label>Количество повторений</label>
+        <input type="number" name="recurrence_count" min="1" value="1">
+        <label>Время</label>
+        <input type="time" name="time" required>
+        <label>Дата</label>
+        <input type="date" name="date" required>
+        <label>Статус</label>
+        <select name="status">
+          <option value="upcoming">Будущее</option>
+          <option value="past">Прошедшее</option>
+        </select>
+        <button type="submit" id="save-event">Сохранить</button>
+        <button type="button" id="edit-event">Редактировать</button>
+        <button type="button" id="delete-event">Удалить</button>
+      </form>
+    </div>
   </div>
-
-  <!-- Панель события -->
-  <div class="event-panel" id="event-panel">
-    <button class="close-panel" id="close-panel">×</button>
-    <h3>Событие</h3>
-    <form id="event-form">
-      <label>Тип</label>
-      <input type="text" name="type" required>
-
-      <label>Формат</label>
-      <select name="format">
-        <option value="online">Онлайн</option>
-        <option value="offline">Оффлайн</option>
-      </select>
-
-      <label>Организатор</label>
-      <input type="text" name="organizer" required>
-
-      <label>Описание</label>
-      <textarea name="description" rows="4"></textarea>
-      
-      <label>Ссылка на событие</label>
-      <input type="url" name="link" placeholder="https://example.com">
-
-      <label>Цвет события</label>
-      <input type="color" name="color" value="#dca9f2">
-
-      <label>Локация</label>
-      <input type="text" name="location">
-      
-      <label>Количество участников</label>
-      <input type="number" name="participants" min="1">
-
-      <label>Повторение</label>
-      <select name="recurrence">
-        <option value="none">Нет</option>
-        <option value="daily">Ежедневно</option>
-        <option value="weekly">Еженедельно</option>
-        <option value="monthly">Ежемесячно</option>
-      </select>
-
-      <label>Количество повторений</label>
-      <input type="number" name="recurrence_count" min="1" value="1">
-
-      <label>Время</label>
-      <input type="time" name="time" required>
-
-      <label>Дата</label>
-      <input type="date" name="date" required>
-
-      <label>Статус</label>
-      <select name="status">
-        <option value="future">Будущее</option>
-        <option value="past">Прошедшее</option>
-      </select>
-
-      <input type="hidden" name="edit" value="false">
-      <button type="submit">Сохранить</button>
-      <button type="button" id="delete-event">Удалить</button>
-    </form>
-  </div>
-
   <script src="script_admin.js"></script>
 </body>
 </html>

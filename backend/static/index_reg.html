@@ -4,25 +4,50 @@
     <meta charset="UTF-8">
     <title>Календарь мероприятий 8 института</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles_reg.css">
 </head>
 <body>
+    <div class="back-arrow" onclick="window.history.back()">
+        <i class="fas fa-arrow-left"></i>
+    </div>
+    
     <div class="container">
-        <h2>Login</h2>
-<!--        <form id="loginForm"> action="/login" method="POST">-->
+        <div class="logo">
+            <i class="fas fa-calendar-alt"></i>
+        </div>
+        <h2>Добро пожаловать</h2>
+        <p class="subtitle">Войдите в свой аккаунт</p>
+        
         <form id="loginForm">
-            <input type="text" id="username" name="username" placeholder="login" required/>
-            <div class="password-container">
-                <input id="password" type="password" name="password" placeholder="password" required/>
+            <div class="input-group">
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" id="username" name="username" placeholder="Логин" required/>
+            </div>
+            
+            <div class="input-group password-container">
+                <i class="fas fa-lock input-icon"></i>
+                <input id="password" type="password" name="password" placeholder="Пароль" required/>
                 <img id="togglePassword" class="eye-icon" src="hide.png">
             </div>
-            <button type="submit"><b>Login</b></button>
-            <div id="message" style="color: red; margin-top: 10px;"></div> <!-- Добавьте это -->
+            
+            <button type="submit" class="btn-glow">
+                <b>Войти</b>
+                <div class="glow"></div>
+            </button>
+            
+            <div id="message" class="message"></div>
         </form>
     </div>
-    <script src="JS_script_db.js"></script>
+    
+    <div class="floating-bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
     <script defer src="script_reg.js"></script>
 </body>
 </html>
-

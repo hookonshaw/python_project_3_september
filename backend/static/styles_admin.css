@@ -1,412 +1,356 @@
-/* Общие стили */
+
+/* Определение переменных для тем */
+:root[data-theme="dark"] {
+  --background-color: #1a1a1a;
+  --text-color: #e1b7f5;
+  --header-bg: #dca9f2;
+  --header-text: #ffffff;
+  --border-color: #e1b7f5;
+  --event-bg: #dca9f2;
+  --event-text: #1a1a1a;
+  --panel-bg: #2c2c2c;
+  --input-bg: #1a1a1a;
+  --button-bg: #dca9f2;
+  --button-text: #ffffff;
+}
+
+:root[data-theme="light"] {
+  --background-color: #ffffff;
+  --text-color: #333333;
+  --header-bg: #800080;
+  --header-text: #ffffff;
+  --border-color: #800080;
+  --event-bg: #e0b0ff;
+  --event-text: #333333;
+  --panel-bg: #f5f5f5;
+  --input-bg: #ffffff;
+  --button-bg: #800080;
+  --button-text: #ffffff;
+}
+
 html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a4a 100%);
-    color: #e0e0e0;
-    font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Шапка */
 .header {
-    background: linear-gradient(90deg, #7b2cbf 0%, #9d4edd 100%);
-    color: #ffffff;
-    padding: 15px 40px;
-    border-radius: 15px;
-    margin: 20px auto;
-    font-size: 24px;
-    font-weight: 600;
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    max-width: 90%;
+  background-color: var(--header-bg);
+  color: var(--header-text);
+  padding: 10px 30px;
+  border-radius: 30px;
+  margin: 20px auto 10px;
+  font-size: 20px;
+  text-align: center;
 }
 
-/* Контейнер календаря */
 .calendar-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 1400px; /* Увеличена максимальная ширина */
-    margin: 0 auto;
-    padding: 20px;
-    box-sizing: border-box;
+  min-height: 100vh;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 2%;
+  box-sizing: border-box;
 }
 
-/* Заголовок календаря */
 .calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 20px;
-    margin: 15px auto;
-    width: 100%;
-    max-width: 1200px; /* Увеличена максимальная ширина заголовка */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 24px;
+  margin: 10px auto;
+  width: 100%;
+  max-width: 1000px;
 }
 
 .calendar-header button {
-    background: none;
-    border: none;
-    color: #e0e0e0;
-    font-size: 28px;
-    cursor: pointer;
-    transition: transform 0.2s ease, color 0.2s ease;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 30px;
+  cursor: pointer;
 }
 
-.calendar-header button:hover {
-    color: #9d4edd;
-    transform: scale(1.2);
-}
-
-/* Переключатель видов */
 .view-switcher {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 5px;
 }
 
 .view-btn {
-    background: #2a2a4a;
-    border: 1px solid #9d4edd;
-    color: #e0e0e0;
-    padding: 8px 16px;
-    cursor: pointer;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.view-btn:hover {
-    background: #9d4edd;
-    color: #ffffff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
 .view-btn.active {
-    background: #7b2cbf;
-    color: #ffffff;
-    border-color: #7b2cbf;
+  background: var(--button-bg);
+  color: var(--button-text);
 }
 
-/* Скрытые элементы */
 .hidden {
-    display: none;
+  display: none;
 }
 
-/* Месячный вид */
 .calendar-table {
-    width: 100%;
-    max-width: 1200px; /* Увеличена максимальная ширина таблицы */
-    margin: 0 auto;
-    border-collapse: collapse;
-    flex: 1;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    overflow: hidden;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  flex: 1;
 }
 
 .calendar-table th,
 .calendar-table td {
-    border: 1px solid rgba(157, 78, 221, 0.3);
-    width: 14.28%; /* Обеспечивает равномерное распределение */
-    height: calc(100vh / 6); /* Увеличена высота ячеек для лучшей читаемости */
-    text-align: right;
-    vertical-align: top;
-    padding: 10px;
-    font-size: 16px;
-    box-sizing: border-box;
-    cursor: pointer;
-    /* Убраны эффекты наведения */
+  border: 2px solid var(--border-color);
+  width: 14.28%;
+  height: calc(100vh / 8);
+  text-align: right;
+  vertical-align: top;
+  padding: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  cursor: pointer;
 }
 
 .calendar-table th {
-    font-weight: 600;
-    text-align: center;
-    background: rgba(123, 44, 191, 0.1);
+  font-weight: bold;
+  text-align: center;
 }
 
-.calendar-table td:hover {
-    background: transparent; /* Убрано выделение при наведении */
-}
-
-/* Недельный вид */
 .week-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    overflow: hidden;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .week-table th,
 .week-table td {
-    border: 1px solid rgba(157, 78, 221, 0.3);
-    padding: 10px;
-    text-align: center;
-    vertical-align: top;
-    height: 100px;
-    /* Убраны эффекты наведения */
+  border: 1px solid var(--border-color);
+  padding: 8px;
+  text-align: center;
+  vertical-align: top;
+  height: 100px;
 }
 
 .week-table th {
-    font-weight: 600;
-    background: rgba(123, 44, 191, 0.1);
+  font-weight: bold;
 }
 
-.week-table td:hover {
-    background: transparent; /* Убрано выделение при наведении */
-}
-
-/* Дневной вид */
 .day-grid {
-    display: grid;
-    grid-template-rows: repeat(24, 70px);
-    gap: 8px;
-    margin-top: 15px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 10px;
+  display: grid;
+  grid-template-rows: repeat(12, 60px); /* 12 строк для часов с 8:00 до 19:00 */
+  gap: 5px;
+  margin-top: 10px;
+  width: 100%;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hour-slot {
-    border-bottom: 1px solid rgba(157, 78, 221, 0.3);
-    padding: 8px;
-    position: relative;
-    /* Убраны эффекты наведения */
-}
-
-.hour-slot:hover {
-    background: transparent; /* Убрано выделение при наведении */
+  border-bottom: 1px solid var(--border-color);
+  padding: 5px;
+  position: relative;
+  min-width: 200px; /* Предотвращает сжатие */
 }
 
 .hour-label {
-    position: absolute;
-    left: 10px;
-    top: 8px;
-    font-weight: 500;
-    color: #e0e0e0;
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  font-weight: bold;
 }
 
-/* События */
 .event-block {
-    background: #7b2cbf;
-    color: #ffffff;
-    padding: 4px 8px;
-    border-radius: 6px;
-    margin-top: 8px;
-    font-size: 13px;
-    cursor: move;
-    user-select: none;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.event-block:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  background-color: var(--event-bg);
+  color: var(--event-text);
+  padding: 2px 5px;
+  border-radius: 3px;
+  margin-top: 5px;
+  font-size: 12px;
 }
 
 .conflict-event {
-    background: #ff4d4d !important;
-    border: 1px solid #cc0000 !important;
+  background-color: #ff6b6b !important;
+  border: 1px solid #ff0000 !important;
 }
 
 .recurring-event {
-    border-left: 4px solid #4CAF50;
+  border-left: 3px solid #4CAF50;
 }
 
-/* Иконка пользователя */
 .user-icon {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 30px;
-    color: #e0e0e0;
-    transition: transform 0.2s ease;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 28px;
+  color: var(--text-color);
+}
+
+.user-icon-link {
+  text-decoration: none;
+  color: var(--text-color);
+  cursor: pointer;
+  z-index: 1000;
 }
 
 .user-icon-link:hover .user-icon {
-    transform: scale(1.2);
-    color: #9d4edd;
+  transform: scale(1.2);
 }
 
-/* Панель событий */
 .event-panel {
-    overflow-y: auto;
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 350px;
-    height: 100%;
-    background: #2a2a4a;
-    color: #e0e0e0;
-    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.3);
-    padding: 25px;
-    display: none;
-    flex-direction: column;
-    z-index: 1000;
-    border-left: 2px solid #9d4edd;
+  overflow-y: auto;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100%;
+  background-color: var(--panel-bg);
+  color: var(--text-color);
+  box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+  padding: 20px;
+  display: none;
+  flex-direction: column;
+  z-index: 1000;
+  box-sizing: border-box;
 }
 
 .event-panel h3 {
-    margin: 0 0 20px;
-    font-size: 22px;
-    font-weight: 600;
-    color: #ffffff;
+  margin-top: 0;
 }
 
 .event-panel label {
-    display: block;
-    margin: 12px 0 6px;
-    font-weight: 500;
+  display: block;
+  margin: 10px 0 5px;
 }
 
 .event-panel input,
 .event-panel select,
 .event-panel textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-    border: 1px solid rgba(157, 78, 221, 0.5);
-    background: #1e1e2f;
-    color: #e0e0e0;
-    font-size: 14px;
-    transition: border-color 0.2s ease;
-}
-
-.event-panel input:focus,
-.event-panel select:focus,
-.event-panel textarea:focus {
-    border-color: #9d4edd;
-    outline: none;
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-color);
 }
 
 .event-panel button[type="submit"],
+.event-panel #delete-event,
+.event-panel #edit-event,
+.event-panel #generate-description-btn {
+  background-color: var(--button-bg);
+  border: none;
+  color: var(--button-text);
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.event-panel #generate-description-btn {
+  background-color: #4CAF50;
+}
+
+.event-panel #generate-description-btn:hover {
+  background-color: #45a049;
+}
+
 #delete-event {
-    background: #7b2cbf;
-    border: none;
-    color: #ffffff;
-    padding: 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.event-panel button[type="submit"]:hover,
-#delete-event:hover {
-    background: #9d4edd;
-    transform: translateY(-2px);
-}
-
-#delete-event {
-    background: #ff4d4d;
-    display: none;
-}
-
-#delete-event:hover {
-    background: #cc0000;
+  display: none;
 }
 
 .close-panel {
-    background: none;
-    border: none;
-    color: #e0e0e0;
-    font-size: 24px;
-    cursor: pointer;
-    align-self: flex-end;
-    transition: color 0.2s ease;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 20px;
+  cursor: pointer;
+  align-self: flex-end;
 }
 
-.close-panel:hover {
-    color: #9d4edd;
-}
-
-/* Уведомления */
 .notification-icon {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    font-size: 28px;
-    color: #e0e0e0;
-    cursor: pointer;
-    z-index: 1000;
-    transition: transform 0.2s ease;
-}
-
-.notification-icon:hover {
-    transform: scale(1.2);
-    color: #9d4edd;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1000;
+  color: var(--text-color);
 }
 
 .notification-count {
-    background: #ff4d4d;
-    color: #ffffff;
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 50%;
-    position: absolute;
-    top: -10px;
-    left: 20px;
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  position: absolute;
+  top: -8px;
+  left: 16px;
 }
 
 .notification-list {
-    position: fixed;
-    top: 60px;
-    left: 20px;
-    width: 300px;
-    max-height: 350px;
-    overflow-y: auto;
-    background: #2a2a4a;
-    border: 1px solid rgba(157, 78, 221, 0.5);
-    border-radius: 12px;
-    padding: 15px;
-    z-index: 999;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  position: fixed;
+  top: 60px;
+  left: 20px;
+  width: 250px;
+  max-height: 300px;
+  overflow-y: auto;
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 999;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .notification-list p {
-    margin: 8px 0;
-    font-size: 14px;
-    color: #e0e0e0;
-    border-bottom: 1px solid rgba(157, 78, 221, 0.3);
-    padding-bottom: 8px;
+  margin: 8px 0;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 4px;
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-    .calendar-container {
-        padding: 10px;
-    }
+.logout-btn {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background-color: #ff4d4d;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 1000;
+}
 
-    .calendar-header {
-        flex-direction: column;
-        gap: 10px;
-    }
+.logout-btn:hover {
+  background-color: #ff1a1a;
+}
 
-    .event-panel {
-        width: 100%;
-        max-width: 100%;
-        border-left: none;
-        border-top: 2px solid #9d4edd;
-    }
-
-    .calendar-table th,
-    .calendar-table td {
-        font-size: 14px;
-        padding: 5px;
-    }
-
-    .week-table th,
-    .week-table td {
-        font-size: 14px;
-        padding: 5px;
-    }
-
-    .day-grid {
-        grid-template-rows: repeat(24, 50px);
-    }
+/* Стили для переключателя темы */
+.theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 60px; /* Сдвигаем, чтобы не перекрывать иконку пользователя */
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1000;
 }

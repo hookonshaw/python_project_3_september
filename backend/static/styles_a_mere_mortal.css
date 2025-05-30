@@ -1,195 +1,260 @@
+/* Определение переменных для тем */
+:root[data-theme="dark"] {
+  --background-color: #1a1a1a;
+  --text-color: #e1b7f5;
+  --header-bg: #dca9f2;
+  --header-text: #ffffff;
+  --border-color: #e1b7f5;
+  --event-bg: #dca9f2;
+  --event-text: #1a1a1a;
+  --panel-bg: #2c2c2c;
+  --input-bg: #1a1a1a;
+  --button-bg: #dca9f2;
+  --button-text: #ffffff;
+}
+
+:root[data-theme="light"] {
+  --background-color: #ffffff;
+  --text-color: #333333;
+  --header-bg: #800080;
+  --header-text: #ffffff;
+  --border-color: #800080;
+  --event-bg: #e0b0ff;
+  --event-text: #333333;
+  --panel-bg: #f5f5f5;
+  --input-bg: #ffffff;
+  --button-bg: #800080;
+  --button-text: #ffffff;
+}
+
 html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background-color: #1a1a1a;
-    color: #e1b7f5;
-    font-family: 'Segoe UI', sans-serif;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .auth-links {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-  }
-  
-  .login-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 28px;
-  }
-  
-  .header {
-    background-color: #dca9f2;
-    color: white;
-    padding: 10px 30px;
-    border-radius: 30px;
-    margin: 20px auto 10px;
-    font-size: 20px;
-    text-align: center;
-  }
-  
-  .calendar-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    max-width: 100%;
-    margin: 0 auto;
-    width: 100%;
-    padding: 0 2%;
-    box-sizing: border-box;
-  }
-  
-  .calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 24px;
-    margin: 10px auto;
-    width: 100%;
-    max-width: 1000px;
-  }
-  
-  .calendar-header button {
-    background: none;
-    border: none;
-    color: #e1b7f5;
-    font-size: 30px;
-    cursor: pointer;
-  }
-  
-  .view-switcher {
-    display: flex;
-    gap: 5px;
-  }
-  
-  .view-btn {
-    background: #2c2c2c;
-    border: 1px solid #e1b7f5;
-    color: #e1b7f5;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  
-  .view-btn.active {
-    background: #e1b7f5;
-    color: #1a1a1a;
-  }
-  
-  .hidden {
-    display: none !important;
-  }
-  
-  /* Месячный вид */
-  .calendar-table {
-    width: 100%;
-    height: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-    border-collapse: collapse;
-    flex: 1;
-  }
-  
-  .calendar-table th,
-  .calendar-table td {
-    border: 2px solid #e1b7f5;
-    width: 14.28%;
-    height: calc(100vh / 8);
-    text-align: right;
-    vertical-align: top;
-    padding: 5px;
-    font-size: 16px;
-    box-sizing: border-box;
-    cursor: pointer;
-  }
-  
-  .calendar-table th {
-    font-weight: bold;
-    text-align: center;
-  }
-  
-  /* Недельный вид */
-  .week-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .week-table th, 
-  .week-table td {
-    border: 1px solid #e1b7f5;
-    padding: 8px;
-    text-align: center;
-    vertical-align: top;
-    height: 100px;
-  }
-  
-  .week-table th {
-    font-weight: bold;
-  }
-  
-  /* Дневной вид */
-  .day-grid {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background-color: var(--header-bg);
+  color: var(--header-text);
+  padding: 10px 30px;
+  border-radius: 30px;
+  margin: 20px auto 10px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.calendar-container {
+  min-height: 100vh;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 2%;
+  box-sizing: border-box;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 24px;
+  margin: 10px auto;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.calendar-header button {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.view-switcher {
+  display: flex;
+  gap: 5px;
+}
+
+.view-btn {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.view-btn.active {
+  background: var(--button-bg);
+  color: var(--button-text);
+}
+
+.hidden {
+  display: none;
+}
+
+.calendar-table {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  flex: 1;
+}
+
+.calendar-table th,
+.calendar-table td {
+  border: 2px solid var(--border-color);
+  width: 14.28%;
+  height: calc(100vh / 8);
+  text-align: right;
+  vertical-align: top;
+  padding: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.calendar-table th {
+  font-weight: bold;
+  text-align: center;
+}
+
+.week-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.week-table th,
+.week-table td {
+  border: 1px solid var(--border-color);
+  padding: 8px;
+  text-align: center;
+  vertical-align: top;
+  height: 100px;
+}
+
+.week-table th {
+  font-weight: bold;
+}
+
+.day-grid {
     display: grid;
     grid-template-rows: repeat(24, 60px);
     gap: 5px;
     margin-top: 10px;
-  }
-  
-  .hour-slot {
-    border-bottom: 1px solid #e1b7f5;
-    padding: 5px;
-    position: relative;
-  }
-  
-  .hour-label {
-    position: absolute;
-    left: 5px;
-    top: 5px;
-    font-weight: bold;
-  }
-  
-  .event-block {
-    background-color: #dca9f2;
-    color: #1a1a1a;
-    padding: 2px 5px;
-    border-radius: 3px;
-    margin-top: 5px;
-    font-size: 12px;
-    cursor: pointer;
-  }
-  
-  /* Панель просмотра события */
-  .event-view-panel {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 300px;
-    height: 100%;
-    background-color: #2c2c2c;
-    color: white;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
-    padding: 20px;
-    z-index: 1000;
-    overflow-y: auto;
-  }
-  
-  .event-details {
-    margin-top: 20px;
-  }
-  
-  .event-details p {
-    margin-bottom: 10px;
-  }
-  
-  .close-panel {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-    align-self: flex-end;
-  }
+    width: 100%;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hour-slot {
+  border-bottom: 1px solid var(--border-color);
+  padding: 5px;
+  position: relative;
+  display: flex; /* Размещаем события горизонтально */
+  flex-wrap: wrap; /* Переносим события, если их много */
+  gap: 5px; /* Отступ между событиями */
+  align-items: flex-start; /* Выравнивание по верхнему краю */
+  min-height: 60px; /* Минимальная высота для каждого слота */
+  width: 100%;
+}
+
+.hour-label {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.event-block {
+  background-color: var(--event-bg);
+  color: var(--event-text);
+  padding: 2px 5px;
+  border-radius: 3px;
+  margin-top: 5px;
+  font-size: 12px;
+  flex: 1 1 auto;
+}
+
+.conflict-event {
+  background-color: #ff6b6b !important;
+  border: 1px solid #ff0000 !important;
+}
+
+.recurring-event {
+  border-left: 3px solid #4CAF50;
+}
+
+.login-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 28px;
+  color: var(--text-color);
+  text-decoration: none;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.event-panel {
+  overflow-y: auto;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100%;
+  background-color: var(--panel-bg);
+  color: var(--text-color);
+  box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+  padding: 20px;
+  display: none;
+  flex-direction: column;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+.event-panel h3 {
+  margin-top: 0;
+}
+
+.event-panel label {
+  display: block;
+  margin: 10px 0 5px;
+}
+
+.event-panel p {
+  margin: 5px 0;
+}
+
+.close-panel {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 20px;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+/* Стили для переключателя темы */
+.theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 60px; /* Сдвигаем, чтобы не перекрывать иконку пользователя */
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1000;
+}

@@ -1,8 +1,11 @@
+// Файл: script_a_mere_mortal.js
+
 const monthYear = document.getElementById('month-year');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 const eventViewPanel = document.getElementById('event-view-panel');
 const closeViewPanelBtn = document.getElementById('close-view-panel');
+const themeToggle = document.getElementById('theme-toggle');
 
 let currentDate = new Date();
 let currentView = 'month';
@@ -13,34 +16,160 @@ const months = ['Январь', 'Февраль', 'Март', 'Апрель', '�
 
 const daysOfWeek = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
-// Инициализация календаря
 function initCalendar() {
-  // Загрузка тестовых данных (в реальном приложении будет запрос к серверу)
-  loadSampleEvents();
   setupEventListeners();
+  loadEventsFromServer();
   renderView();
+  initTheme();
 }
 
-// Загрузка тестовых событий
-function loadSampleEvents() {
-  const today = new Date();
-  const tomorrow = new Date();
-  tomorrow.setDate(today.getDate() + 1);
-  
-  events = {};
+function initTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  themeToggle.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
 }
 
-// Основная функция рендеринга
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+  themeToggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+}
+
+async function loadEventsFromServer() {
+  try {
+    const headers = {};
+    const token = localStorage.getItem('token');
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch('/get_events', {
+      headers: headers
+    });
+
+    if (!response.ok) throw new Error('Ошибка загрузки событий');
+
+    const serverEvents = await response.json();
+    events = processServerEvents(serverEvents);
+    renderView();
+  } catch (error) {
+    console.error('Ошибка загрузки событий:', error);
+    events = {};
+    renderView();
+  }
+}
+
+function processServerEvents(serverEvents) {
+  const processed = {};
+  const eventsArray = serverEvents.events || serverEvents;
+
+  if (!Array.isArray(eventsArray)) {
+    console.error('serverEvents.events не является массивом:', eventsArray);
+    return processed;
+  }
+
+  eventsArray.forEach((event, index) => {
+    const dateStr = event.event_date;
+    const time = event.event_time || event.time;
+    if (!/^\d{2}:\d{2}$/.test(time)) {
+      console.warn(`Некорректный формат времени для события ${event.event_name || event.type}: ${time}`);
+      return;
+    }
+
+    if (!processed[dateStr]) processed[dateStr] = [];
+    const processedEvent = {
+      id: event.id || index,
+      type: event.event_name || 'Не указано',
+      date: event.event_date || 'Не указано',
+      time: time,
+      format: event.format || '',
+      organizer: event.organisator || '',
+      location: event.event_auditory || '',
+      description: event.description || '',
+      color: event.color || '#dca9f2',
+      recurrence_pattern: event.recurrence_pattern || 'none',
+      recurrence_count: event.recurrence_count || 1
+    };
+    processed[dateStr].push(processedEvent);
+    console.log(`Обработано событие на ${dateStr}:`, processedEvent);
+  });
+  return processed;
+}
+
+function hasConflicts(dateStr, event_time, event_auditory, excludeEventId = null) {
+  if (!events[dateStr]) return false;
+
+  const [hour, minute] = event_time.split(':').map(Number);
+  const eventTime = hour * 60 + minute;
+
+  return events[dateStr].some(event => {
+    if (excludeEventId && event.id === excludeEventId) return false;
+
+    const [eventHour, eventMinute] = event.time.split(':').map(Number);
+    const existingTime = eventHour * 60 + eventMinute;
+
+    const hasAuditoryConflict = event_auditory && event.location && event.location === event_auditory;
+    const isTimeConflict = Math.abs(existingTime - eventTime) < 60;
+
+    return hasAuditoryConflict && isTimeConflict;
+  });
+}
+
+function setupEventListeners() {
+  prevBtn.addEventListener('click', () => {
+    updateDate(-1);
+    renderView();
+  });
+  nextBtn.addEventListener('click', () => {
+    updateDate(1);
+    renderView();
+  });
+  document.querySelectorAll('.view-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentView = btn.dataset.view;
+      renderView();
+    });
+  });
+  closeViewPanelBtn.addEventListener('click', () => {
+    eventViewPanel.style.display = 'none';
+  });
+  themeToggle.addEventListener('click', toggleTheme);
+}
+
+function formatDate(date) {
+  // Базовая реализация, если не определена
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function updateDate(direction) {
+  // Базовая реализация, если не определена
+  switch (currentView) {
+    case 'month':
+      currentDate.setMonth(currentDate.getMonth() + direction);
+      break;
+    case 'week':
+      currentDate.setDate(currentDate.getDate() + direction * 7);
+      break;
+    case 'day':
+      currentDate.setDate(currentDate.getDate() + direction);
+      break;
+  }
+}
+
 function renderView() {
-  // Скрываем все представления
   document.querySelectorAll('.view-container').forEach(view => {
     view.classList.add('hidden');
   });
   
-  // Показываем активное представление
   document.getElementById(`${currentView}-view`).classList.remove('hidden');
 
-  // Рендерим содержимое
   switch(currentView) {
     case 'month':
       renderMonthView();
@@ -54,7 +183,6 @@ function renderView() {
   }
 }
 
-// --- Месячный вид ---
 function renderMonthView() {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -69,13 +197,11 @@ function renderMonthView() {
   let row = document.createElement('tr');
   let cellCount = 0;
 
-  // Пустые ячейки в начале месяца
   for (let i = 0; i < startDay; i++) {
     row.appendChild(document.createElement('td'));
     cellCount++;
   }
 
-  // Ячейки с днями
   for (let day = 1; day <= lastDay.getDate(); day++) {
     const cell = document.createElement('td');
     const dateStr = formatDate(new Date(year, month, day));
@@ -84,10 +210,14 @@ function renderMonthView() {
     if (events[dateStr] && events[dateStr].length > 0) {
       events[dateStr].forEach((event, index) => {
         const eventDiv = document.createElement('div');
-        eventDiv.className = 'event-block';
+        eventDiv.className = `event-block ${event.recurrence_pattern !== 'none' ? 'recurring-event' : ''} 
+                            ${hasConflicts(dateStr, event.time, event.location, event.id) ? 'conflict-event' : ''}`;
         eventDiv.textContent = `${event.type} (${event.time})`;
+        eventDiv.style.backgroundColor = event.color || '#dca9f2';
+        eventDiv.dataset.eventId = index;
         eventDiv.addEventListener('click', (e) => {
           e.stopPropagation();
+          console.log('Клик по событию:', event);
           showEventDetails(event);
         });
         cell.appendChild(eventDiv);
@@ -103,7 +233,6 @@ function renderMonthView() {
     }
   }
 
-  // Пустые ячейки в конце месяца
   while (cellCount % 7 !== 0) {
     row.appendChild(document.createElement('td'));
     cellCount++;
@@ -111,10 +240,9 @@ function renderMonthView() {
   if (row.cells.length > 0) monthBody.appendChild(row);
 }
 
-// --- Недельный вид ---
 function renderWeekView() {
   const weekStart = new Date(currentDate);
-  weekStart.setDate(currentDate.getDate() - currentDate.getDay() + 1); // Понедельник
+  weekStart.setDate(currentDate.getDate() - currentDate.getDay() + 1);
 
   monthYear.textContent = `Неделя ${weekStart.getDate()}-${weekStart.getDate() + 6} ${months[weekStart.getMonth()]}`;
 
@@ -123,7 +251,6 @@ function renderWeekView() {
   weekHeader.innerHTML = '';
   weekBody.innerHTML = '';
 
-  // Заголовок с днями недели
   let headerRow = document.createElement('tr');
   for (let i = 0; i < 7; i++) {
     const day = new Date(weekStart);
@@ -134,7 +261,6 @@ function renderWeekView() {
   }
   weekHeader.appendChild(headerRow);
 
-  // Тело таблицы (часы)
   for (let hour = 8; hour < 20; hour++) {
     const row = document.createElement('tr');
     for (let i = 0; i < 7; i++) {
@@ -144,14 +270,18 @@ function renderWeekView() {
       const td = document.createElement('td');
 
       if (events[dateStr]) {
-        events[dateStr].forEach((event) => {
+        events[dateStr].forEach((event, index) => {
           const eventHour = parseInt(event.time.split(':')[0]);
           if (eventHour === hour) {
             const eventDiv = document.createElement('div');
-            eventDiv.className = 'event-block';
+            eventDiv.className = `event-block ${event.recurrence_pattern !== 'none' ? 'recurring-event' : ''} 
+                                ${hasConflicts(dateStr, event.time, event.location, event.id) ? 'conflict-event' : ''}`;
             eventDiv.textContent = `${event.type} (${event.time})`;
+            eventDiv.style.backgroundColor = event.color || '#dca9f2';
+            eventDiv.dataset.eventId = index;
             eventDiv.addEventListener('click', (e) => {
               e.stopPropagation();
+              console.log('Клик по событию:', event);
               showEventDetails(event);
             });
             td.appendChild(eventDiv);
@@ -165,7 +295,6 @@ function renderWeekView() {
   }
 }
 
-// --- Дневной вид ---
 function renderDayView() {
   const dateStr = formatDate(currentDate);
   monthYear.textContent = `${currentDate.getDate()} ${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
@@ -179,14 +308,18 @@ function renderDayView() {
     hourSlot.innerHTML = `<div class="hour-label">${hour}:00</div>`;
 
     if (events[dateStr]) {
-      events[dateStr].forEach((event) => {
-        const eventHour = parseInt(event.time.split(':')[0]);
+      events[dateStr].forEach((event, index) => {
+        const [eventHour, eventMinute] = event.time.split(':').map(Number);
         if (eventHour === hour) {
           const eventDiv = document.createElement('div');
-          eventDiv.className = 'event-block';
-          eventDiv.textContent = `${event.type} (${event.organizer})`;
+          eventDiv.className = `event-block ${event.recurrence_pattern !== 'none' ? 'recurring-event' : ''} 
+                              ${hasConflicts(dateStr, event.time, event.location, event.id) ? 'conflict-event' : ''}`;
+          eventDiv.textContent = `${event.type} (${event.time})`;
+          eventDiv.style.backgroundColor = event.color || '#dca9f2';
+          eventDiv.dataset.eventId = index;
           eventDiv.addEventListener('click', (e) => {
             e.stopPropagation();
+            console.log('Клик по событию:', event);
             showEventDetails(event);
           });
           hourSlot.appendChild(eventDiv);
@@ -198,59 +331,29 @@ function renderDayView() {
   }
 }
 
-// Показать детали события
 function showEventDetails(event) {
-  document.getElementById('view-type').textContent = event.type;
-  document.getElementById('view-format').textContent = event.format === 'online' ? 'Онлайн' : 'Оффлайн';
-  document.getElementById('view-date').textContent = event.date;
-  document.getElementById('view-time').textContent = event.time;
-  document.getElementById('view-organizer').textContent = event.organizer;
-  document.getElementById('view-location').textContent = event.location || 'Не указано';
-  document.getElementById('view-description').textContent = event.description || 'Нет описания';
-  
-  eventViewPanel.classList.remove('hidden');
+  console.log('Открытие деталей события:', event);
+  const eventPanel = document.getElementById('event-view-panel');
+  console.log('eventPanel:', eventPanel);
+  const viewType = document.getElementById('view-type');
+  const viewFormat = document.getElementById('view-format');
+  const viewDate = document.getElementById('view-date');
+  const viewTime = document.getElementById('view-time');
+  const viewOrganizer = document.getElementById('view-organizer');
+  const viewLocation = document.getElementById('view-location');
+  const viewDescription = document.getElementById('view-description');
+
+  // Заполняем поля данными события
+  viewType.textContent = event.type || 'Не указано';
+  viewFormat.textContent = event.format || 'Не указано';
+  viewDate.textContent = event.date || 'Не указано';
+  viewTime.textContent = event.time || 'Не указано';
+  viewOrganizer.textContent = event.organizer || 'Не указано';
+  viewLocation.textContent = event.location || 'Не указано';
+  viewDescription.textContent = event.description || 'Не указано';
+
+  // Показываем панель
+  eventPanel.style.display = 'block';
 }
 
-// Закрыть панель просмотра
-function closeEventViewPanel() {
-  eventViewPanel.classList.add('hidden');
-}
-
-// Форматирование даты
-function formatDate(date) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-}
-
-// Настройка обработчиков событий
-function setupEventListeners() {
-  // Переключение видов
-  document.querySelectorAll('.view-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-      currentView = this.dataset.view;
-      renderView();
-    });
-  });
-
-  // Навигация
-  prevBtn.addEventListener('click', () => {
-    if (currentView === 'month') currentDate.setMonth(currentDate.getMonth() - 1);
-    else if (currentView === 'week') currentDate.setDate(currentDate.getDate() - 7);
-    else currentDate.setDate(currentDate.getDate() - 1);
-    renderView();
-  });
-
-  nextBtn.addEventListener('click', () => {
-    if (currentView === 'month') currentDate.setMonth(currentDate.getMonth() + 1);
-    else if (currentView === 'week') currentDate.setDate(currentDate.getDate() + 7);
-    else currentDate.setDate(currentDate.getDate() + 1);
-    renderView();
-  });
-
-  // Закрытие панели просмотра
-  closeViewPanelBtn.addEventListener('click', closeEventViewPanel);
-}
-
-// Запуск календаря
 initCalendar();
