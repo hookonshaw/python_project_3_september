@@ -44,9 +44,11 @@ class EventDelete(BaseModel):
     event_name: str
     event_date: str
     event_time: str
+    event_auditory: str
 
 
 class EventUpdate(BaseModel):
+    id: int
     event_name: Optional[str] = None
     event_date: Optional[str] = None
     event_time: Optional[str] = None
