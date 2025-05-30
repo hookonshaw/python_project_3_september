@@ -1,5 +1,4 @@
 import hashlib
-import os
     
 
 def hash_password(password: str) -> bytes:
