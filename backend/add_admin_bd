@@ -1,0 +1,12 @@
+import sqlite3
+from hash_password import hash_password
+
+connection = sqlite3.connect('events.db')
+cursor = connection.cursor()
+
+log = input("Введите логин: ")
+pas = input("Введите пароль: ")
+
+cursor.execute('INSERT INTO admins (name, password_hash) VALUES (?, ?)', (log, pas))
+connection.commit()
+connection.close()
