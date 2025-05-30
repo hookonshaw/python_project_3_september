@@ -57,7 +57,7 @@
 ## 📎Ссылки на ресурсы: <br />
 [Ссылка на доску Miro](https://miro.com/welcomeonboard/TUxialhITllGVHgwQlZhVSt1Sy8zYnFnRUd0VkNyUFlHcU9kSG1mNU1VYjB4dWwvQ0xnQ3ZMVEN6ZXNTcG5lR2RQay9MRktEODJPb0IxOHVnOVcweC9CdzQ1K2NoNmkxRkdmblQvL2FuZCt0Q081Y3RiTyt5cWYzcXplU0tFcFN3VHhHVHd5UWtSM1BidUtUYmxycDRnPT0hdjE=?share_link_id=752528952253) <br />
 [Ссылка на доску задач Yougile](https://ru.yougile.com/board/9caed9w4kp21) <br />
-[Ссылка на презентацию]([https://ru.yougile.com/board/9caed9w4kp21](https://1drv.ms/p/c/c2a945d3d741da6d/ERgoWSlfzKNItSmq1BZYdgUBxfEVcCtPxa0C6F_ikbkhlQ)) <br />
+[Ссылка на презентацию](https://1drv.ms/p/c/c2a945d3d741da6d/ERgoWSlfzKNItSmq1BZYdgUBxfEVcCtPxa0C6F_ikbkhlQ) <br />
 
 ## ⚙️Запуск проекта:
   #### 1.Установка зависимостей:
