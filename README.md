@@ -73,32 +73,37 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
   <h3>Главная страница(вид - месяц) </h3>
 </div>
 
-![image](https://github.com/user-attachments/assets/089d9f27-b402-4221-8dd3-8f32643f3399) <br />
+![image](https://github.com/user-attachments/assets/5da514d3-baf7-491f-89af-7df901912e3d)
+ <br />
 
 <div align="center">
   <h3>Главная страница(вид - неделя)</h3>
 </div>
 
-![image](https://github.com/user-attachments/assets/39abfa54-ac75-4bcf-9ec0-9545e76e8a49) <br />
+![image](https://github.com/user-attachments/assets/5d5b8c4a-dea1-4e0d-8235-66938bf90d3a)
+ <br />
 
 <div align="center">
   <h3>Главная страница(вид - день)</h3>
 </div>
 
-![image](https://github.com/user-attachments/assets/7a7f11e4-f67d-4326-92bc-b32b15d01e6b) <br />
+![image](https://github.com/user-attachments/assets/a2a19ac5-1209-4453-8c34-c94bbacb65d1)
+ <br />
 
 <div align="center">
   <h3>Страница авторизации для контент-менеджера</h3>
 </div>
 
 
-![image](https://github.com/user-attachments/assets/b8787e8c-11ad-4696-901e-71763abcfc5b) <br />
+![image](https://github.com/user-attachments/assets/cadde711-17f2-4479-8113-d60bba0f5a70)
+ <br />
 
 <div align="center">
-  <h3>Режим контент-менеджера, добавление событий</h3>
+  <h3>Режим контент-менеджера, добавление событий (дневная тема)</h3>
 </div>
 
-![image](![image](https://github.com/user-attachments/assets/b3867023-b440-4158-85b0-453af943e337)) <br />
+![image](https://github.com/user-attachments/assets/7f23aafa-3a57-4e9a-9308-e42d1f531287)
+ <br />
 
 
 
