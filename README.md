@@ -98,7 +98,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
   <h3>Режим контент-менеджера, добавление событий</h3>
 </div>
 
-![image](https://github.com/user-attachments/assets/725e6612-87f4-4aac-b95f-9eba02e50b44) <br />
+![image](![image](https://github.com/user-attachments/assets/b3867023-b440-4158-85b0-453af943e337)) <br />
 
 
 
